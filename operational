@@ -1,0 +1,59 @@
+* COMMENT -*- mode: org -*-
+#+Date: 2019-03-02
+Time-stamp: <2019-03-03>
+#+STARTUP: content
+* notes                                                               :entry:
+* later                                                               :entry:
+* current                                                             :entry:
+** 
+** 2019-03-03 some list is very long. 695 fragments. I need a thread pool.
+5 concurrent worker.
+
+self.process_media_playlist()
+
+self.download_fragment(urljoin(url, line))
+
+this is the key part I need concurrency.
+
+search: python you can switch between threadpool processpool etc
+
+concurrent.future?
+
+** 2019-03-03 add progress tracking log.
+do a commit before I add this.
+
+** 2019-03-02 my plan
+- target temp dir:
+  subdir and filename same as original path.
+
+  result mp4 in user specified filename.
+
+- run ffmpeg command:
+  ffmpeg -allowed_extensions ALL -i local.m3u8 -c copy -bsf:a aac_adtstoasc all.mp4
+
+* done                                                                :entry:
+** 2019-03-03 try enable http keepalive and connection reuse.
+I see lot of starting new http connection to the same site.
+
+http://docs.python-requests.org/en/master/user/advanced/#session-objects
+very easy to use api.
+
+** 2019-03-02 check the spec for #EXT-X-STREAM-INF etc.
+RFC 8216 - HTTP Live Streaming
+https://tools.ietf.org/html/rfc8216
+
+oh, it's part of HLS spec.
+
+Is it easy to select only the highest quality video stream, then replicate
+that on local dir?
+
+the master list can include different encoding or resolution.
+
+#EXTINF:3.400000,
+this is the length of the video fragment.
+
+#EXT-X-KEY
+The methods defined are: NONE, AES-128, and SAMPLE-AES.
+since ffmpeg already handle this. I don't need to know the details.
+
+* wontfix                                                             :entry:
