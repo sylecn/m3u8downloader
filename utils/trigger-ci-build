@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# you can trigger a CI build in this script.
+# nowadays most CI trigger a build themselves when you push commits to server.

@@ -1,0 +1,53 @@
+#!/bin/sh
+set -e
+
+print_help_and_exit() {
+	echo "Usage: build-deb
+create a deb package for this project."
+	exit 1
+}
+
+# main()
+if [ "$1" = "--help" ]; then
+	print_help_and_exit
+fi
+
+VERSION=`grep '__version__' m3u8downloader/__init__.py |cut -d'"' -f 2`
+DEB_PKG_NAME="m3u8downloader"
+DEST_DIR="/opt/$DEB_PKG_NAME"
+PYTHON_MODULES="m3u8downloader"
+#PYTHON_MODULES=`echo */__init__.py|cut -d'/' -f1`
+
+if [ ! -d wheelhouse ]; then
+	make wheel
+fi
+
+# add dependencies on libpq5 if you use psycopg2.
+fpm -t deb -s dir -n "$DEB_PKG_NAME" -v "$VERSION" --prefix "$DEST_DIR" -f \
+    --depends make \
+    -x '*__pycache__' \
+    -x '*.pyc' \
+    -x '*.pyo' \
+    -x '*.deb' \
+    --before-install deb-scripts/before-install.sh \
+    --after-install deb-scripts/after-install.sh \
+    --before-remove deb-scripts/before-remove.sh \
+    Makefile README.rst setup.py utils requirements*.txt wheelhouse conf \
+    $PYTHON_MODULES
+
+# create Dockerfile and .dockerignore file
+DEB_PKG="m3u8downloader_${VERSION}_amd64.deb"
+DEPENDS=`dpkg-deb -f "$DEB_PKG" Depends | sed "s/, / /g"`
+if ! echo "$DEPENDS" | grep -q python; then
+	DEPENDS="$DEPENDS python3"
+fi
+sed "s/DEB_PKG/$DEB_PKG/; s/DEPENDS/$DEPENDS/" Dockerfile.template > Dockerfile
+
+if [ -e .dockerignore ]; then
+	sed -i 2s/'.*'/!$DEB_PKG/ .dockerignore
+else
+	cat > .dockerignore <<EOF
+*
+!$DEB_PKG
+EOF
+fi

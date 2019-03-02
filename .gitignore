@@ -1,0 +1,23 @@
+# BEGIN regular python ignore list
+.venv/
+bin/
+include/
+lib/python2.7/
+lib/python2.6/
+lib/python3.3/
+lib/python3.4/
+local/
+dist/
+build/
+wheelhouse/
+*.egg-info/
+*.py[co]
+__pycache__/
+.tox
+*.deb
+doc/_build/
+TAGS
+# ENG regular python ignore list
+Dockerfile
+.dockerignore
+tmp-*

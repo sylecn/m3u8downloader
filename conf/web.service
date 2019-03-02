@@ -1,0 +1,16 @@
+[Unit]
+Description=TODO add description here
+
+[Service]
+Type=simple
+LimitNOFILE=65535
+Environment="LANG=en_US.UTF-8"
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PORT=8082"
+User=www-data
+Group=www-data
+ExecStart=/usr/bin/make run -C /opt/m3u8downloader
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

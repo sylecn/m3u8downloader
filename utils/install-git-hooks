@@ -1,0 +1,19 @@
+#!/bin/sh
+
+script_path=`realpath $0`
+dir=`dirname "$script_path"`
+project_root=`dirname "$dir"`
+
+if [ "$1" = '-f' ]; then
+	force=yes
+else
+	force=no
+fi
+
+if [ "$force" = yes ]; then
+	COPY_OPTIONS="-af"
+else
+	COPY_OPTIONS="-ai"
+fi
+
+cp $COPY_OPTIONS "$project_root/git-hooks/"* "$project_root/.git/hooks/"

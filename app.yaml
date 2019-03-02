@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m3u8downloader
+spec:
+  selector:
+    matchLabels:
+      app: m3u8downloader
+  replicas: 1
+  minReadySeconds: 10
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: m3u8downloader
+    spec:
+      imagePullSecrets:
+      - name: pull-from-de02-reg
+      containers:
+      - name: m3u8downloader
+        image: de02-reg.emacsos.com/sylecn/m3u8downloader:IMAGE_TAG
+        env:
+          - name: ENV
+            value: prod
+          - name: HOST
+            value: "0.0.0.0"
+          - name: PORT
+            value: "8082"
+        ports:
+        - containerPort: 8082
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 8082
+        #     httpHeaders:
+        #       - name: Host
+        #         value: foo.emacsos.com
+        #   initialDelaySeconds: 60
+        #   periodSeconds: 30
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 8082
+        #     httpHeaders:
+        #       - name: Host
+        #         value: foo.emacsos.com
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 5
+        # resources:
+        #   requests:
+        #     cpu: 50m
+        #     memory: 50Mi
+        #   limits:
+        #     cpu: 50m
+        #     memory: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: m3u8downloader
+spec:
+  ports:
+  - port: 8082
+    targetPort: 8082
+  selector:
+    app: m3u8downloader
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: m3u8downloader
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  tls:
+  - secretName: emacsos-com-cert
+    hosts:
+    - foo.emacsos.com
+  rules:
+    - host: foo.emacsos.com
+      http:
+        paths:
+          - backend:
+              serviceName: m3u8downloader
+              servicePort: 8082

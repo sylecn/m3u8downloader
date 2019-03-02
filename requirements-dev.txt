@@ -1,0 +1,11 @@
+# requirements file format
+# https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format
+# https://www.python.org/dev/peps/pep-0440/#version-specifiers
+pytest==4.2.0
+pycodestyle==2.5.0
+pylint ~= 1.9.4; python_version < '3.4'
+pylint ~= 2.3.0; python_version >= '3.4'
+
+# some pkg latest version no longer support python 2 or python3.4
+more-itertools<6.0.0; python_version < '3.4'    # dependency for pytest
+astroid <2.0.0; python_version < '3.4'          # dependency for pylint

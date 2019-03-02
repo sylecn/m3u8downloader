@@ -1,0 +1,17 @@
+description "TODO add description here"
+start on runlevel [2345]
+stop on runlevel [06]
+
+env LANG=en_US.UTF-8
+env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+chdir /opt/m3u8downloader
+setuid www-data
+setgid www-data
+
+exec bin/uwsgi --die-on-term --ini conf/uwsgi.ini
+
+kill timeout 10
+
+respawn
+respawn limit 10 5
