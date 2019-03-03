@@ -12,7 +12,13 @@ from m3u8downloader.main import is_higher_resolution
 from m3u8downloader.main import get_url_path
 from m3u8downloader.main import get_basename
 from m3u8downloader.main import get_fullpath
+from m3u8downloader.main import http_line_to_relpath_line
 
+
+# test for http_line_to_relpath_line
+def test_http_line_to_relpath_line():
+    assert http_line_to_relpath_line("https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png") == "20180627/1530068509/vts/audio000.png"
+    assert http_line_to_relpath_line("https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png?abc=def") == "20180627/1530068509/vts/audio000.png"
 
 # test for join
 def test_join():

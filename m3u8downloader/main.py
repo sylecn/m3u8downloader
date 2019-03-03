@@ -96,6 +96,37 @@ def get_fullpath(filename):
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filename)))
 
 
+def http_line_to_relpath_line(url_line):
+    """convert a url line in m3u8 file to use relative path in local fs.
+
+    """
+    r = urlparse(url_line)
+    return r.path[1:]
+
+
+def drop_http_link_in_m3u8_file(local_m3u8_filename):
+    """drop http protocol, host part for all resource lines.
+
+    """
+    with open(local_m3u8_filename, 'r') as f:
+        content = f.read()
+    if 'http' not in content:
+        logger.info("media playlist m3u8 file doesn't contain http link")
+        return
+    with open(local_m3u8_filename, 'w') as f:
+        for line in content.split('\n'):
+            if line.startswith('#'):
+                f.write(line)
+                f.write('\n')
+            if line.strip() == '':
+                f.write(line)
+                f.write('\n')
+            if line.startswith('http'):
+                f.write(http_line_to_relpath_line(line))
+                f.write('\n')
+    logger.info("updated media playlist m3u8 file: %s", local_m3u8_filename)
+
+
 class M3u8Downloader:
     def __init__(self, url, output_filename, tempdir="."):
         self.start_url = url
@@ -223,6 +254,7 @@ class M3u8Downloader:
 
         """
         self.media_playlist_localfile = self.mirror_url_resource(url)
+        drop_http_link_in_m3u8_file(self.media_playlist_localfile)
         if content is None:
             content = get_url_content(url)
 

@@ -39,6 +39,31 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
+** 2019-03-03 generate mp4 for audio sequence fail.
+probably because of png ext.
+https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png
+
+ffprobe on the png file show correct result.
+it's aac audio.
+
+- try again.
+
+  ffmpeg -allowed_extensions ALL -i "/home/sylecn/.cache/m3u8downloader/28】/apiv286.m3u8" -acodec copy -vcodec copy -bsf:a aac_adtstoasc ~/d/t2/foo.m4a
+
+  it's not the file extension's problem.
+  it's the URL link.
+
+- audio .m3u8 uses absolute link that is not hosted on the same domain.
+
+  media playlist:
+  ~/.cache/m3u8downloader/28】/apiv286.m3u8
+  https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png
+
+  I need to truncate the domain part for the local m3u8 files.
+  plain mirror is not enough.
+
+  it works.
+
 ** 2019-03-03 add progress tracking log.
 do a commit before I add this.
 
