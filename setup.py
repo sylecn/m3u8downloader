@@ -29,9 +29,9 @@ setup(
         "https://emacsos.com/python/packages/"
     ],
     entry_points={
-        # 'console_scripts': [
-        #     'main = m3u8downloader.main:main',
-        # ]
+        'console_scripts': [
+            'downloadm3u8 = m3u8downloader.main:main',
+        ]
     },
     package_data={
         'm3u8downloader': ['logger.conf']

@@ -8,11 +8,12 @@ config variables
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-import m3u8downloader.configlogger
 import logging
 import os
 
 from wells.config import ConfigurationManger
+
+import m3u8downloader.configlogger    # pylint: disable=unused-import
 
 
 logger = logging.getLogger(__name__)

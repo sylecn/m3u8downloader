@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 
 """download m3u8 file reliably.
@@ -19,12 +19,14 @@ import subprocess
 import re
 from urllib.parse import urljoin, urlparse
 from collections import OrderedDict
+import multiprocessing
+import multiprocessing.queues
 import logging
 
 import requests
 from wells.utils import retry
 
-import m3u8downloader.configlogger
+import m3u8downloader.configlogger    # pylint: disable=unused-import
 
 logger = logging.getLogger(__name__)
 SESSION = requests.Session()
@@ -79,20 +81,36 @@ def get_suffix_from_url(url):
     return "." + r[-1]
 
 
+def get_basename(filename):
+    """return filename with path and ext removed.
+
+    """
+    return os.path.splitext(os.path.basename(filename))[0]
+
+
+def get_fullpath(filename):
+    """make a canonical absolute path filename.
+
+    """
+    return os.path.abspath(os.path.expandvars(os.path.expanduser(filename)))
+
+
 class M3u8Downloader:
     def __init__(self, url, output_filename, tempdir="."):
         self.start_url = url
         logger.info("output_filename=%s", output_filename)
-        self.output_filename = output_filename
-
-        _, output_filename_nodir = os.path.split(output_filename)
-        self.tempdir = os.path.abspath(
-            os.path.join(tempdir, "tmp-" + output_filename_nodir))
-        os.makedirs(self.tempdir, exist_ok=True)
-        logger.info("using temp dir at: %s", self.tempdir)
+        self.output_filename = get_fullpath(output_filename)
+        self.tempdir = get_fullpath(
+            os.path.join(tempdir, get_basename(output_filename)))
+        try:
+            os.makedirs(self.tempdir, exist_ok=True)
+            logger.info("using temp dir at: %s", self.tempdir)
+        except IOError as _:
+            logger.exception("create tempdir failed for: %s", self.tempdir)
+            raise
 
         self.media_playlist_localfile = None
-        self.sequence_number = 0
+        self.poolsize = 5
         # {full_url: local_file}
         self.fragments = OrderedDict()
 
@@ -114,11 +132,11 @@ class M3u8Downloader:
             logger.error("run ffmpeg command failed: exitcode=%s",
                          proc.returncode)
             sys.exit(proc.returncode)
-        logger.info("mp4 file created: %s  size: %.1fMiB",
-                    target_mp4, filesizeMiB(target_mp4))
-        logger.info("To clean up temp files:\nrm -rf \"%s\"", self.tempdir)
-        # logger.info("clean up temp files")
-        # subprocess.run(["/bin/rm", "-rf", self.tempdir])
+        logger.info("mp4 file created, size=%.1fMiB, filename=%s",
+                    filesizeMiB(target_mp4), target_mp4)
+        logger.info("Running: rm -rf \"%s\"", self.tempdir)
+        subprocess.run(["/bin/rm", "-rf", self.tempdir])
+        logger.info("temp files removed")
 
     def mirror_url_resource(self, remote_file_url):
         """download remote file and replicate the same dir structure locally.
@@ -161,13 +179,43 @@ class M3u8Downloader:
         """download a video fragment.
 
         """
-        if url in self.fragments:
-            logger.info("skip downloaded fragment: %s", url)
-            return
         fragment_full_name = self.mirror_url_resource(url)
         if fragment_full_name:
             logger.info("fragment created at: %s", fragment_full_name)
+        return (url, fragment_full_name)
+
+    def fragment_downloaded(self, result):
+        """apply_async callback.
+
+        """
+        url, fragment_full_name = result
         self.fragments[url] = fragment_full_name
+
+    def fragment_download_failed(self, e):    # pylint: disable=no-self-use
+        """apply_async error callback.
+
+        """
+        try:
+            raise e
+        except Exception:    # pylint: disable=broad-except
+            # I don't have the url in the run time exception. hope requests
+            # exception have it.
+            logger.exception("fragment download failed")
+
+    def download_fragments(self, fragment_urls):
+        """download fragments.
+
+        """
+        pool = multiprocessing.Pool(self.poolsize)
+        for url in fragment_urls:
+            if url in self.fragments:
+                logger.info("skip downloaded fragment: %s", url)
+                continue
+            pool.apply_async(self.download_fragment, (url,),
+                             callback=self.fragment_downloaded,
+                             error_callback=self.fragment_download_failed)
+        pool.close()
+        pool.join()
 
     def process_media_playlist(self, url, content=None):
         """replicate every file on the playlist in local temp dir.
@@ -176,14 +224,20 @@ class M3u8Downloader:
         self.media_playlist_localfile = self.mirror_url_resource(url)
         if content is None:
             content = get_url_content(url)
+
+        fragment_urls = []
         for line in content.decode("utf-8").split('\n'):
             if line.startswith('#EXT-X-KEY'):
                 self.download_key(url, line)
-            if line.startswith('#'):
+                continue
+            if line.startswith('#') or line.strip() == '':
                 continue
             if line.endswith(".m3u8"):
                 raise RuntimeError("media playlist should not include .m3u8")
-            self.download_fragment(urljoin(url, line))
+            fragment_urls.append(urljoin(url, line))
+
+        self.download_fragments(fragment_urls)
+        logger.info("media playlist all fragments downloaded")
 
     def process_master_playlist(self, url, content):
         """choose the highest quality media playlist, and download it.
@@ -226,11 +280,15 @@ def main():
     try:
         ofile = sys.argv[1]
         url = sys.argv[2]
+        if len(sys.argv) > 3:
+            tempdir = sys.argv[3]
+        else:
+            tempdir = get_fullpath('~/.cache/m3u8downloader')
     except IndexError:
         logger.error("Usage: m3u8 OUTPUT_FILE URL")
         sys.exit(1)
     SESSION.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'})
-    downloader = M3u8Downloader(url, ofile)
+    downloader = M3u8Downloader(url, ofile, tempdir)
     downloader.start()
 
 

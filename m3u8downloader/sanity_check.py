@@ -10,7 +10,7 @@ import logging
 
 from wells.utils import check
 
-from m3u8downloader.config import CONF
+from m3u8downloader.config import CONF    # pylint: disable=unused-import
 # from m3u8downloader import db
 
 logger = logging.getLogger(__name__)

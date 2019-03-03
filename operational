@@ -4,8 +4,54 @@ Time-stamp: <2019-03-03>
 #+STARTUP: content
 * notes                                                               :entry:
 * later                                                               :entry:
+** 2019-03-03 create a chrome extension, click button to send page url to ~/bin/mm
+to handle it on ryzen5.
+
+- chrome extension.
+  do fetch call to
+  GET https://mm.emacsos.com/api/mm?url=xxx
+
+  this api should check whether url is supported. if so, store url in
+  db/persistent queue and return immediately, and do parsing and download in
+  other thread. if not, return some err msg.
+
+  This api should be able to handle both pictures and m3u8 videos.
+
+- chrome extension can view downloads.
+  get data from
+  GET https://mm.emacsos.com/api/history
+
+  this will have data for:
+  | url        | page title | task add time       | dl progress   | dl time | target file |
+  |------------+------------+---------------------+---------------+---------+-------------|
+  | foo.com/a/ | xxx        | 2019-03-03 11:42:59 | [xxxxxx.....] | 25s     | -           |
+  |            |            |                     |               |         |             |
+
+- maybe I can host mm.emacsos.com on the public internet.
+  add some static token based auth support.
+
+  This allow me send url to download from mobile devices.
+  but chrome mobile and safari doesn't support extensions.
+  opening a website to store a url is not better than just store it in notes app.
+
+  won't do this. just send request to localhost.
+  make the api endpoint configurable.
+
 * current                                                             :entry:
 ** 
+** 2019-03-03 add progress tracking log.
+do a commit before I add this.
+
+* done                                                                :entry:
+** 2019-03-02 my plan
+- target temp dir:
+  subdir and filename same as original path.
+
+  result mp4 in user specified filename.
+
+- run ffmpeg command:
+  ffmpeg -allowed_extensions ALL -i local.m3u8 -c copy -bsf:a aac_adtstoasc all.mp4
+
 ** 2019-03-03 some list is very long. 695 fragments. I need a thread pool.
 5 concurrent worker.
 
@@ -17,21 +63,41 @@ this is the key part I need concurrency.
 
 search: python you can switch between threadpool processpool etc
 
-concurrent.future?
+multiprocessing.Pool works.
 
-** 2019-03-03 add progress tracking log.
-do a commit before I add this.
+- if I use multiprocessing.Pool.map, I no longer have progress info.
+  could use external db for progress tracking.
 
-** 2019-03-02 my plan
-- target temp dir:
-  subdir and filename same as original path.
+  if I use multiprocessing worker, self.fragments[url] = fragment_full_name
+  will no longer work. the slave thread will get a copy of every variable.
 
-  result mp4 in user specified filename.
+  seems not a good idea.
 
-- run ffmpeg command:
-  ffmpeg -allowed_extensions ALL -i local.m3u8 -c copy -bsf:a aac_adtstoasc all.mp4
+  use pool.apply_async instead.
+  this can have callback which can modify self.fragments[url].
 
-* done                                                                :entry:
+- dev
+  - the check "if url in self.fragments" won't work.
+    it's a copy, not realtime updated distributed dict.
+    fixed. do the check in main thread.
+  - ffmpeg output is not reproducible anymore?
+    ['ffmpeg', '-allowed_extensions', 'ALL', '-i', '/home/sylecn/projects/m3u8downloader/tmp-foo2/20190227/D9cU9xCM/480kb/hls/index.m3u8', '-acodec', 'copy', '-vcodec', 'copy', '-bsf:a', 'aac_adtstoasc', '/home/sylecn/d/t2/foo2.mp4']
+
+    ffmpeg -allowed_extensions ALL -i /home/sylecn/projects/m3u8downloader/tmp-foo2/20190227/D9cU9xCM/480kb/hls/index.m3u8 -acodec copy -vcodec copy -bsf:a aac_adtstoasc /home/sylecn/d/t2/foo3.mp4
+    ll -sh /home/sylecn/d/t2/foo3.mp4
+
+    diff /home/sylecn/d/t2/foo3.mp4  /home/sylecn/d/t2/foo2.mp4
+    it works okay. try it again using redownloaded files.
+
+    cp ~/d/t2/foo2.mp4  ~/d/t2/foo2-bak.mp4 
+    make run
+    diff /home/sylecn/d/t2/foo2.mp4 ~/d/t2/foo2-bak.mp4
+    They do differ. maybe it's just metadata?
+
+    foo2-bak has pre-episode ad seconds.
+    foo2 doesn't have.
+  - ffmpeg created video has glitches.
+
 ** 2019-03-03 try enable http keepalive and connection reuse.
 I see lot of starting new http connection to the same site.
 
@@ -57,3 +123,18 @@ The methods defined are: NONE, AES-128, and SAMPLE-AES.
 since ffmpeg already handle this. I don't need to know the details.
 
 * wontfix                                                             :entry:
+** 2019-03-03 ffmpeg created video from local m3u8 file has glitches.
+especially for the first few seconds.
+
+- try play the local m3u8 file in chrome.
+
+  mmv http://sex8.cc/thread-11588980-1-1.html
+  create a html file myself.
+  html <video> tag didn't work.
+  try use ckplayer flash plugin.
+
+  it works.
+  the source video has glitches. it's not ffmpeg's problem.
+
+- 
+

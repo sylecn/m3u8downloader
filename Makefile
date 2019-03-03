@@ -2,7 +2,7 @@ PYTHON_MODULES := m3u8downloader
 PYTHONPATH := .
 VENV := .venv
 PYTEST := env PYTHONPATH=$(PYTHONPATH) PYTEST=1 $(VENV)/bin/py.test
-PYLINT := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/pylint --disable=I0011 --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"
+PYLINT := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/pylint --disable=I0011,line-too-long,invalid-name --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"
 PEP8 := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/pycodestyle --repeat --ignore=E202,E501,E402,W504
 PYTHON := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
@@ -27,8 +27,9 @@ version:
 debug:
 	env DEBUG=1 $(PYTHON) m3u8downloader/main.py
 run:
-#$(PYTHON) m3u8downloader/main.py "高颜值小美女ＫＴＶ卫生间没操得手 醉酒带到宾馆被两男无套抽插轮着操.mp4" "http://www.meituii.space/20190227/IaArsErV/index.m3u8"
-	$(PYTHON) m3u8downloader/main.py ~/d/t2/"网红主播在外面找男人之在停车场做爱直播系列。这种妓女主播.mp4" "http://www.meituii.space/20190227/D9cU9xCM/index.m3u8"
+	$(PYTHON) m3u8downloader/main.py $(OFILE) $(URL)
+t1:
+	$(PYTHON) m3u8downloader/t1.py
 uwsgi:
 	$(VENV)/bin/uwsgi --processes=2 --threads=4 --wsgi-file=m3u8downloader/main.py --env=PYTHONPATH=. --http=localhost:8082 --disable-logging
 shell:
