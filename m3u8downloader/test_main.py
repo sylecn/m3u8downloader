@@ -20,6 +20,7 @@ def test_http_line_to_relpath_line():
     assert http_line_to_relpath_line("https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png") == "20180627/1530068509/vts/audio000.png"
     assert http_line_to_relpath_line("https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png?abc=def") == "20180627/1530068509/vts/audio000.png"
 
+
 # test for join
 def test_join():
     assert os.path.normpath(os.path.join("/foo/bar/baz", "./abc.txt")) == "/foo/bar/baz/abc.txt"
