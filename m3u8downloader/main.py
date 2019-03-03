@@ -12,6 +12,7 @@ Features:
 
 from __future__ import print_function, unicode_literals
 
+import argparse
 import sys
 import os
 import os.path
@@ -277,18 +278,16 @@ class M3u8Downloader:
 
 
 def main():
-    try:
-        ofile = sys.argv[1]
-        url = sys.argv[2]
-        if len(sys.argv) > 3:
-            tempdir = sys.argv[3]
-        else:
-            tempdir = get_fullpath('~/.cache/m3u8downloader')
-    except IndexError:
-        logger.error("Usage: m3u8 OUTPUT_FILE URL")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="download video at m3u8 url")
+    parser.add_argument('--output', '-o', help='target video filename')
+    parser.add_argument(
+        '--tempdir', default='~/.cache/m3u8downloader',
+        help='temp dir, used to store .ts files before combing them into mp4')
+    parser.add_argument('url', help='the m3u8 url')
+    args = parser.parse_args()
+
     SESSION.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'})
-    downloader = M3u8Downloader(url, ofile, tempdir)
+    downloader = M3u8Downloader(args.url, args.output, args.tempdir)
     downloader.start()
 
 

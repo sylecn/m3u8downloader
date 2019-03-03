@@ -40,15 +40,14 @@ setup(
     author_email="sylecn@gmail.com",
     maintainer="Yuanle Song",
     maintainer_email="sylecn@gmail.com",
-    description="FIXME add description",
+    description="a cli program to download video at m3u8 url",
     long_description=open('README.rst').read(),
     license="GPLv2+",
     url="https://pypi.python.org/pypi/m3u8downloader",
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
-        # 'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ]
 )

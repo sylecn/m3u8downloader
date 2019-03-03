@@ -27,9 +27,7 @@ version:
 debug:
 	env DEBUG=1 $(PYTHON) m3u8downloader/main.py
 run:
-	$(PYTHON) m3u8downloader/main.py $(OFILE) $(URL)
-t1:
-	$(PYTHON) m3u8downloader/t1.py
+	$(PYTHON) m3u8downloader/main.py -o $(OFILE) $(URL)
 uwsgi:
 	$(VENV)/bin/uwsgi --processes=2 --threads=4 --wsgi-file=m3u8downloader/main.py --env=PYTHONPATH=. --http=localhost:8082 --disable-logging
 shell:
