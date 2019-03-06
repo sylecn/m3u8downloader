@@ -111,7 +111,7 @@ def drop_http_link_in_m3u8_file(local_m3u8_filename):
     with open(local_m3u8_filename, 'r') as f:
         content = f.read()
     if 'http' not in content:
-        logger.info("media playlist m3u8 file doesn't contain http link")
+        logger.debug("media playlist m3u8 file doesn't contain http link")
         return
     with open(local_m3u8_filename, 'w') as f:
         for line in content.split('\n'):
@@ -124,19 +124,19 @@ def drop_http_link_in_m3u8_file(local_m3u8_filename):
             if line.startswith('http'):
                 f.write(http_line_to_relpath_line(line))
                 f.write('\n')
-    logger.info("updated media playlist m3u8 file: %s", local_m3u8_filename)
+    logger.info("http links modified in m3u8 file: %s", local_m3u8_filename)
 
 
 class M3u8Downloader:
     def __init__(self, url, output_filename, tempdir="."):
         self.start_url = url
-        logger.info("output_filename=%s", output_filename)
+        logger.debug("output_filename=%s", output_filename)
         self.output_filename = get_fullpath(output_filename)
         self.tempdir = get_fullpath(
             os.path.join(tempdir, get_basename(output_filename)))
         try:
             os.makedirs(self.tempdir, exist_ok=True)
-            logger.info("using temp dir at: %s", self.tempdir)
+            logger.debug("using temp dir at: %s", self.tempdir)
         except IOError as _:
             logger.exception("create tempdir failed for: %s", self.tempdir)
             raise
@@ -205,7 +205,7 @@ class M3u8Downloader:
         uri = mo.group(1)
         key_url = urljoin(url, uri)
         local_key_file = self.mirror_url_resource(key_url)
-        logger.info("key downloaded at: %s", local_key_file)
+        logger.debug("key downloaded at: %s", local_key_file)
 
     def download_fragment(self, url):
         """download a video fragment.
@@ -213,7 +213,7 @@ class M3u8Downloader:
         """
         fragment_full_name = self.mirror_url_resource(url)
         if fragment_full_name:
-            logger.info("fragment created at: %s", fragment_full_name)
+            logger.debug("fragment created at: %s", fragment_full_name)
         return (url, fragment_full_name)
 
     def fragment_downloaded(self, result):
@@ -294,7 +294,7 @@ class M3u8Downloader:
                 replace_on_next_line = False
             if target_media_playlist is None:
                 target_media_playlist = line
-        logger.info("choose resolution=%s uri=%s",
+        logger.info("chose resolution=%s uri=%s",
                     last_resolution, target_media_playlist)
         self.process_media_playlist(urljoin(url, target_media_playlist))
 

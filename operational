@@ -1,6 +1,6 @@
 * COMMENT -*- mode: org -*-
 #+Date: 2019-03-02
-Time-stamp: <2019-03-03>
+Time-stamp: <2019-03-06>
 #+STARTUP: content
 * notes                                                               :entry:
 * later                                                               :entry:
@@ -39,6 +39,19 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
+** 2019-03-03 add progress tracking log.
+do a commit before I add this.
+
+- 2019-03-06 expected log:
+  120 fragments
+  25%, 30 fragments fetched.
+  100%, 120 fragments fetched.
+
+  moved some info log to debug log.
+  how to add progress log.
+  pool.join() is blocking.
+
+* done                                                                :entry:
 ** 2019-03-03 generate mp4 for audio sequence fail.
 probably because of png ext.
 https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png
@@ -64,10 +77,6 @@ it's aac audio.
 
   it works.
 
-** 2019-03-03 add progress tracking log.
-do a commit before I add this.
-
-* done                                                                :entry:
 ** 2019-03-02 my plan
 - target temp dir:
   subdir and filename same as original path.
