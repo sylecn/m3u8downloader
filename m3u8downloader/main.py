@@ -143,22 +143,24 @@ class M3u8Downloader:
 
         self.media_playlist_localfile = None
         self.poolsize = 5
+        self.total_fragments = 0
         # {full_url: local_file}
         self.fragments = OrderedDict()
 
     def start(self):
         self.download_m3u8_link(self.start_url)
-        logger.info("%s fragments downloaded", len(self.fragments))
         target_mp4 = self.output_filename
         if not target_mp4.endswith(".mp4"):
             target_mp4 += ".mp4"
-        cmd = ["ffmpeg", "-allowed_extensions", "ALL",
+        cmd = ["ffmpeg",
+               "-loglevel", "warning",
+               "-allowed_extensions", "ALL",
                "-i", self.media_playlist_localfile,
                "-acodec", "copy",
                "-vcodec", "copy",
                "-bsf:a", "aac_adtstoasc",
                target_mp4]
-        logger.info("%s", cmd)
+        logger.info("Running: %s", cmd)
         proc = subprocess.run(cmd)
         if proc.returncode != 0:
             logger.error("run ffmpeg command failed: exitcode=%s",
@@ -222,6 +224,15 @@ class M3u8Downloader:
         """
         url, fragment_full_name = result
         self.fragments[url] = fragment_full_name
+        # progress log
+        fetched_fragment = len(self.fragments)
+        if fetched_fragment == self.total_fragments:
+            logger.info("100%%, %s fragments fetched", self.total_fragments)
+        elif fetched_fragment % 10 == 0:
+            logger.info("[%2.0f%%] %3s/%s fragments fetched",
+                        fetched_fragment * 100.0 / self.total_fragments,
+                        fetched_fragment,
+                        self.total_fragments)
 
     def fragment_download_failed(self, e):    # pylint: disable=no-self-use
         """apply_async error callback.
@@ -239,6 +250,8 @@ class M3u8Downloader:
 
         """
         pool = multiprocessing.Pool(self.poolsize)
+        self.total_fragments = len(fragment_urls)
+        logger.info("playlist has %s fragments", self.total_fragments)
         for url in fragment_urls:
             if url in self.fragments:
                 logger.info("skip downloaded fragment: %s", url)

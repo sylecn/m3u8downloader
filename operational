@@ -39,6 +39,7 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
+* done                                                                :entry:
 ** 2019-03-03 add progress tracking log.
 do a commit before I add this.
 
@@ -51,7 +52,9 @@ do a commit before I add this.
   how to add progress log.
   pool.join() is blocking.
 
-* done                                                                :entry:
+  I can print progress in callback function.
+  is apply_async callback function called on master process? yes.
+
 ** 2019-03-03 generate mp4 for audio sequence fail.
 probably because of png ext.
 https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png
