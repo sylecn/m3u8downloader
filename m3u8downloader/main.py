@@ -101,7 +101,10 @@ def http_line_to_relpath_line(url_line):
 
     """
     r = urlparse(url_line)
-    return r.path[1:]
+    path = r.path
+    if path.startswith('/'):
+        path = path[1:]
+    return path
 
 
 def drop_http_link_in_m3u8_file(local_m3u8_filename):
@@ -110,7 +113,7 @@ def drop_http_link_in_m3u8_file(local_m3u8_filename):
     """
     with open(local_m3u8_filename, 'r') as f:
         content = f.read()
-    if 'http' not in content:
+    if 'http' not in content and '?' not in content:
         logger.debug("media playlist m3u8 file doesn't contain http link")
         return
     with open(local_m3u8_filename, 'w') as f:
@@ -121,7 +124,7 @@ def drop_http_link_in_m3u8_file(local_m3u8_filename):
             if line.strip() == '':
                 f.write(line)
                 f.write('\n')
-            if line.startswith('http'):
+            if line.startswith('http') or '?' in line:
                 f.write(http_line_to_relpath_line(line))
                 f.write('\n')
     logger.info("http links modified in m3u8 file: %s", local_m3u8_filename)
