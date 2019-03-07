@@ -28,6 +28,7 @@ import platform
 import requests
 from wells.utils import retry
 
+import m3u8downloader
 import m3u8downloader.configlogger    # pylint: disable=unused-import
 
 logger = logging.getLogger(__name__)
@@ -341,28 +342,21 @@ class M3u8Downloader:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="download video at m3u8 url")
-    parser.add_argument('--version', action='store_true', help='print version')
+    parser = argparse.ArgumentParser(prog='m3u8downloader',
+                                     description="download video at m3u8 url")
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s ' + m3u8downloader.__version__)
     parser.add_argument('--debug', action='store_true', help='enable debug log')
-    parser.add_argument('--output', '-o', help='target video filename')
+    parser.add_argument('--output', '-o', required=True,
+                        help='output video filename, e.g. ~/Downloads/foo.mp4')
     parser.add_argument(
         '--tempdir', default=os.path.join(get_default_cache_dir(),
                                           'm3u8downloader'),
         help='temp dir, used to store .ts files before combing them into mp4')
     parser.add_argument('--concurrency', '-c', metavar='N', default=5,
                         help='number of fragments to download at a time')
-    parser.add_argument('url', nargs='?', help='the m3u8 url')
+    parser.add_argument('url', metavar='URL', help='the m3u8 url')
     args = parser.parse_args()
-
-    if args.version:
-        import m3u8downloader
-        print("m3u8downloader " + m3u8downloader.__version__)
-        return
-
-    if not args.url:
-        print("URL is required")
-        parser.print_help()
-        sys.exit(1)
 
     if args.debug:
         logging.getLogger("").setLevel(logging.DEBUG)

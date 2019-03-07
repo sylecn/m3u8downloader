@@ -40,22 +40,25 @@ Here is built-in command line help:
 
 .. code-block:: bash
 
-   $ downloadm3u8 --help
-   usage: downloadm3u8 [-h] [--version] [--output OUTPUT] [--tempdir TEMPDIR]
-                       [url]
+   usage: m3u8downloader [-h] [--version] [--debug] --output OUTPUT
+                         [--tempdir TEMPDIR] [--concurrency N]
+                         URL
    
    download video at m3u8 url
    
    positional arguments:
-     url                   the m3u8 url
+     URL                   the m3u8 url
    
    optional arguments:
      -h, --help            show this help message and exit
-     --version             print version
+     --version             show program's version number and exit
+     --debug               enable debug log
      --output OUTPUT, -o OUTPUT
-                           target video filename
+                           output video filename, e.g. ~/Downloads/foo.mp4
      --tempdir TEMPDIR     temp dir, used to store .ts files before combing them
                            into mp4
+     --concurrency N, -c N
+                           number of fragments to download at a time
 
 Documentation
 -------------
