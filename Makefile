@@ -20,6 +20,13 @@ DOCKER_IMAGE_PREFIX := de02-reg.emacsos.com/sylecn
 BUILD_DOCKER_IMAGE := de02-reg.emacsos.com/sylecn/python-build-image:1.0.0
 
 default: check-coding-style
+dist: bootstrap
+	rm -rf dist/*
+	$(PYTHON) setup.py -q sdist
+	$(PYTHON) setup.py -q bdist_wheel --universal
+upload: dist
+	test -e $(VENV)/bin/twine || $(PIP) install -q twine
+	$(VENV)/bin/twine upload dist/*
 build:
 
 version:
@@ -71,7 +78,6 @@ sanity-check: bootstrap
 check-coding-style: bootstrap-dev
 	$(PEP8) $(PYTHON_MODULES)
 	$(PYLINT) -E $(PYTHON_MODULES)
-	$(PYTHON) m3u8downloader/config.py
 pylint-full: check-coding-style
 	$(PYLINT) $(PYTHON_MODULES)
 test: check-coding-style
