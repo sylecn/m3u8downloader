@@ -25,9 +25,6 @@ setup(
     version=get_version_from_init_file(),
     packages=find_packages(exclude=("utils",)),
     install_requires=requirements_file_to_list(),
-    dependency_links=[
-        "https://emacsos.com/python/packages/"
-    ],
     entry_points={
         'console_scripts': [
             'downloadm3u8 = m3u8downloader.main:main',
@@ -43,7 +40,7 @@ setup(
     description="a cli program to download video at m3u8 url",
     long_description=open('README.rst').read(),
     license="GPLv2+",
-    url="https://pypi.python.org/pypi/m3u8downloader",
+    url="https://pypi.org/project/m3u8downloader/",
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License (GPL)',

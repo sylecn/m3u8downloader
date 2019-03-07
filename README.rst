@@ -1,7 +1,14 @@
 m3u8downloader
 ============================
 
-TODO add brief intro
+m3u8downloader is a tool to download video at a m3u8 link. `HTTP Live
+Streaming (HLS)<https://developer.apple.com/streaming/>`_ is becoming
+popular. m3u8 playlist is used by HLS to serve video fragments of different
+quality to different clients. This tool supports HLS master playlist and media
+playlist. If master playlist is given, it selects the highest resolution
+automatically. HLS fragment encryption is supported.
+
+ffmpeg is used to convert the downloaded fragments into final mp4 video file.
 
 Installation
 ------------
@@ -10,22 +17,62 @@ To install m3u8downloader, simply:
 
 .. code-block:: bash
 
-   $ pip install m3u8downloader
+   $ sudo apt install -y ffmpeg
+   $ pip install --user m3u8downloader
 
 
 Quick Start
 -----------
 
-TODO
+Example command line usage:
+
+.. code-block:: bash
+
+   downloadm3u8 -o ~/Downloads/foo.mp4 https://example.com/path/to/foo.m3u8
+
+If ~/.local/bin is not in $PATH, you can use full path:
+
+.. code-block:: bash
+
+   ~/.local/bin/downloadm3u8 -o ~/Downloads/foo.mp4 https://example.com/path/to/foo.m3u8
+
+Here is built-in command line help:
+
+.. code-block:: bash
+
+   $ downloadm3u8 --help
+   usage: downloadm3u8 [-h] [--version] [--output OUTPUT] [--tempdir TEMPDIR]
+                       [url]
+   
+   download video at m3u8 url
+   
+   positional arguments:
+     url                   the m3u8 url
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     --version             print version
+     --output OUTPUT, -o OUTPUT
+                           target video filename
+     --tempdir TEMPDIR     temp dir, used to store .ts files before combing them
+                           into mp4
 
 Documentation
 -------------
 
-TODO
+This command line tool doesn't have extra documents.
+
+Limitations
+-------------
+
+This tool only parses minimum m3u8 extensions for selecting media playlist
+from master playlist, downloading key and fragments from media playlist. If a
+m3u8 file doesn't download correctly, it's probably some new extension was
+added to the HLS spec which this tool isn't aware of.
 
 ChangeLog
 ---------
 
-* v0.1.0 2019-03-02
+* v0.5.1 2019-03-07
 
   - initial release
