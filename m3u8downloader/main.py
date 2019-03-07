@@ -343,6 +343,7 @@ class M3u8Downloader:
 def main():
     parser = argparse.ArgumentParser(description="download video at m3u8 url")
     parser.add_argument('--version', action='store_true', help='print version')
+    parser.add_argument('--debug', action='store_true', help='enable debug log')
     parser.add_argument('--output', '-o', help='target video filename')
     parser.add_argument(
         '--tempdir', default=os.path.join(get_default_cache_dir(),
@@ -360,6 +361,9 @@ def main():
         print("URL is required")
         parser.print_help()
         sys.exit(1)
+
+    if args.debug:
+        logging.getLogger("").setLevel(logging.DEBUG)
 
     SESSION.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'})
     downloader = M3u8Downloader(args.url, args.output, args.tempdir)

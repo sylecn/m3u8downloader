@@ -39,8 +39,8 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
-** 2019-03-07 support --debug argument. change root log level to debug in that case.
 * done                                                                :entry:
+** 2019-03-07 support --debug argument. change root log level to debug in that case.
 ** 2019-03-07 make default cache dir work on windows.
 ** 2019-03-07 honor $XDG_CACHE_HOME
 ** 2019-03-03 add progress tracking log.
