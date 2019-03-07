@@ -40,6 +40,13 @@ to handle it on ryzen5.
 * current                                                             :entry:
 ** 
 * done                                                                :entry:
+** 2019-03-07 it works in windows, but there is too many debug log.
+the python project template log config is not designed for windows.
+When in windows, if env not set, just assume we are in prod env.
+
+- this is a pitfall of the logger.conf, it can't use variable for log file
+  path. if using dictConfig, I can use variables.
+
 ** 2019-03-07 READM.rst doesn't render on pypi.
 You can use the following to find errors in your RST that will show up on PyPI:
 

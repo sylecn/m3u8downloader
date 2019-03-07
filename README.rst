@@ -79,6 +79,10 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.7.5 2019-03-07
+
+  - set default log level to INFO
+
 * v0.7.4 2019-03-07
 
   - initial release

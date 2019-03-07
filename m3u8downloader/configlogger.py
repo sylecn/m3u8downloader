@@ -28,10 +28,9 @@ def load_logger_config():
         fileConfig(resource_filename("m3u8downloader", "logger.conf"))
         return
 
-    ENV = os.getenv("ENV", "test")
-    level = logging.INFO if ENV == "prod" else logging.DEBUG
+    level = logging.INFO
     logging.basicConfig(
-        format='%(asctime)s [%(name)s] %(levelname)-8s %(message)s',
+        format='%(asctime)s %(levelname)-8s %(message)s',
         level=level)
     logging.info("Create log dir %s failed. Using basic config, level=%s",
                  logdir, level)
