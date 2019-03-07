@@ -31,7 +31,7 @@ def load_logger_config():
     ENV = os.getenv("ENV", "test")
     level = logging.INFO if ENV == "prod" else logging.DEBUG
     logging.basicConfig(
-        format='%(asctime)s [%(module)s] %(levelname)-8s %(message)s',
+        format='%(asctime)s [%(name)s] %(levelname)-8s %(message)s',
         level=level)
     logging.info("Create log dir %s failed. Using basic config, level=%s",
                  logdir, level)
