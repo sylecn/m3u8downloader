@@ -23,6 +23,7 @@ from collections import OrderedDict
 import multiprocessing
 import multiprocessing.queues
 import logging
+import platform
 
 import requests
 from wells.utils import retry
@@ -31,6 +32,20 @@ import m3u8downloader.configlogger    # pylint: disable=unused-import
 
 logger = logging.getLogger(__name__)
 SESSION = requests.Session()
+
+
+def get_default_cache_dir():
+    """get platform based default cache dir.
+
+    on linux, this is $XDG_CACHE_HOME or ~/.cache;
+    on windows, this is %LOCALAPPDATA%.
+
+    """
+    if os.getenv("XDG_CACHE_HOME"):
+        return os.getenv("XDG_CACHE_HOME")
+    if os.getenv("LOCALAPPDATA"):
+        return os.getenv("LOCALAPPDATA")
+    return os.path.expanduser('~/.cache')
 
 
 def is_higher_resolution(new_resolution, old_resolution):
@@ -330,7 +345,8 @@ def main():
     parser.add_argument('--version', action='store_true', help='print version')
     parser.add_argument('--output', '-o', help='target video filename')
     parser.add_argument(
-        '--tempdir', default='~/.cache/m3u8downloader',
+        '--tempdir', default=os.path.join(get_default_cache_dir(),
+                                          'm3u8downloader'),
         help='temp dir, used to store .ts files before combing them into mp4')
     parser.add_argument('url', nargs='?', help='the m3u8 url')
     args = parser.parse_args()
