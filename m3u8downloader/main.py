@@ -146,7 +146,7 @@ def drop_http_link_in_m3u8_file(local_m3u8_filename):
 
 
 class M3u8Downloader:
-    def __init__(self, url, output_filename, tempdir="."):
+    def __init__(self, url, output_filename, tempdir=".", poolsize=5):
         self.start_url = url
         logger.debug("output_filename=%s", output_filename)
         self.output_filename = get_fullpath(output_filename)
@@ -160,7 +160,7 @@ class M3u8Downloader:
             raise
 
         self.media_playlist_localfile = None
-        self.poolsize = 5
+        self.poolsize = poolsize
         self.total_fragments = 0
         # {full_url: local_file}
         self.fragments = OrderedDict()
@@ -349,6 +349,8 @@ def main():
         '--tempdir', default=os.path.join(get_default_cache_dir(),
                                           'm3u8downloader'),
         help='temp dir, used to store .ts files before combing them into mp4')
+    parser.add_argument('--concurrency', '-c', metavar='N', default=5,
+                        help='number of fragments to download at a time')
     parser.add_argument('url', nargs='?', help='the m3u8 url')
     args = parser.parse_args()
 
@@ -366,7 +368,9 @@ def main():
         logging.getLogger("").setLevel(logging.DEBUG)
 
     SESSION.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'})
-    downloader = M3u8Downloader(args.url, args.output, args.tempdir)
+    downloader = M3u8Downloader(args.url, args.output,
+                                tempdir=args.tempdir,
+                                poolsize=args.concurrency)
     downloader.start()
 
 
