@@ -2,13 +2,16 @@ m3u8downloader
 ============================
 
 m3u8downloader is a tool to download video at a m3u8 link. `HTTP Live
-Streaming (HLS)<https://developer.apple.com/streaming/>`_ is becoming
-popular. m3u8 playlist is used by HLS to serve video fragments of different
-quality to different clients. This tool supports HLS master playlist and media
-playlist. If master playlist is given, it selects the highest resolution
-automatically. HLS fragment encryption is supported.
+Streaming (HLS)`_ is becoming popular. m3u8 playlist is used by HLS to serve
+video fragments of different quality to different clients. This tool supports
+HLS master playlist and media playlist. If master playlist is given, it
+selects the highest resolution automatically. HLS fragment encryption is
+supported. Resume from partial download is supported, just rerun the same
+command to continue.
 
 ffmpeg is used to convert the downloaded fragments into final mp4 video file.
+
+.. _HTTP Live Streaming (HLS): https://developer.apple.com/streaming/
 
 Installation
 ------------
@@ -76,6 +79,6 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
-* v0.7.3 2019-03-07
+* v0.7.4 2019-03-07
 
   - initial release

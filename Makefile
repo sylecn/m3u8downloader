@@ -26,6 +26,8 @@ dist: bootstrap
 	$(PYTHON) setup.py -q bdist_wheel --universal
 upload: dist
 	test -e $(VENV)/bin/twine || $(PIP) install -q twine
+	$(VENV)/bin/twine check dist/*.whl
+	$(VENV)/bin/twine check dist/*.tar.gz
 	$(VENV)/bin/twine upload dist/*
 build:
 

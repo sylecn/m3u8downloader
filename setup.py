@@ -39,6 +39,7 @@ setup(
     maintainer_email="sylecn@gmail.com",
     description="a cli program to download video at m3u8 url",
     long_description=open('README.rst').read(),
+    long_description_content_type='text/x-rst',
     license="GPLv2+",
     url="https://pypi.org/project/m3u8downloader/",
     classifiers=[

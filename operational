@@ -40,6 +40,13 @@ to handle it on ryzen5.
 * current                                                             :entry:
 ** 
 * done                                                                :entry:
+** 2019-03-07 READM.rst doesn't render on pypi.
+You can use the following to find errors in your RST that will show up on PyPI:
+
+env PYTHONPATH=. .venv/bin/twine check dist/m3u8downloader-0.7.3.tar.gz
+
+line 4: Error: Unknown target name: "http live streaming (hls)<https://developer.apple.com/streaming/>".
+
 ** 2019-03-07 support --debug argument. change root log level to debug in that case.
 ** 2019-03-07 make default cache dir work on windows.
 ** 2019-03-07 honor $XDG_CACHE_HOME
