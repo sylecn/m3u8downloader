@@ -76,6 +76,6 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
-* v0.5.1 2019-03-07
+* v0.7.1 2019-03-07
 
   - initial release
