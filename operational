@@ -1,6 +1,6 @@
 * COMMENT -*- mode: org -*-
 #+Date: 2019-03-02
-Time-stamp: <2019-03-07>
+Time-stamp: <2019-03-08>
 #+STARTUP: content
 * notes                                                               :entry:
 * later                                                               :entry:
@@ -40,6 +40,22 @@ to handle it on ryzen5.
 * current                                                             :entry:
 ** 
 * done                                                                :entry:
+** 2019-03-08 this playlist download fail.
+downloadm3u8 -o ~/d/t2.mp4 https://2.jzshkj.com/20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p.m3u8
+
+playlist is at:
+/20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p.m3u8
+
+fragment path is:
+/20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p0.jpg
+
+So when rewriting the fragment path, it needs to use the relative path to the
+m3u8 file.
+
+- actually, I can just rewrite the line with absolute local file path. I know
+  the fragment_url to local_file mapping after all downloads finishes. I can
+  rewrite the playlist file last.
+
 ** 2019-03-07 it works in windows, but there is too many debug log.
 the python project template log config is not designed for windows.
 When in windows, if env not set, just assume we are in prod env.
