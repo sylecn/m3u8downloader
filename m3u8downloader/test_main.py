@@ -20,6 +20,11 @@ def test_http_line_to_relpath_line():
     assert http_line_to_relpath_line("https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png") == "20180627/1530068509/vts/audio000.png"
     assert http_line_to_relpath_line("https://m3u.x8sinablog.net/20180627/1530068509/vts/audio000.png?abc=def") == "20180627/1530068509/vts/audio000.png"
     assert http_line_to_relpath_line("hls-720p0.ts?e=1551942309&l=0&h=d7cf2b2173b6bfda5c9f738a8e39a7f6") == "hls-720p0.ts"
+    assert http_line_to_relpath_line("/20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p0.jpg") == "20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p0.jpg"
+    assert http_line_to_relpath_line("20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p0.jpg") == "20190307/8fe119a63422c3af10e18aef1a36bb55/hls/hls-360p0.jpg"
+    assert http_line_to_relpath_line("/hls-360p0.jpg") == "hls-360p0.jpg"
+    assert http_line_to_relpath_line("hls-360p0.jpg") == "hls-360p0.jpg"
+    assert http_line_to_relpath_line("hls-360p0.jpg?foo") == "hls-360p0.jpg"
 
 
 # test for join
