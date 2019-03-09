@@ -12,6 +12,17 @@ from m3u8downloader.main import is_higher_resolution
 from m3u8downloader.main import get_url_path
 from m3u8downloader.main import get_basename
 from m3u8downloader.main import get_fullpath
+from m3u8downloader.main import get_local_file_for_url
+
+
+# test for get_local_file_for_url
+def test_get_local_file_for_url():
+    assert get_local_file_for_url("/tmp/foo", "abc.ts") == "/tmp/foo/abc.ts"
+    assert get_local_file_for_url("/tmp/foo", "/abc.ts") == "/tmp/foo/abc.ts"
+    assert get_local_file_for_url("/tmp/foo", "abc/def.ts") == "/tmp/foo/abc/def.ts"
+    assert get_local_file_for_url("/tmp/foo", "./def.ts") == "/tmp/foo/def.ts"
+    assert get_local_file_for_url("/tmp/foo", "http://example.com/abc/def.ts") == "/tmp/foo/abc/def.ts"
+    assert get_local_file_for_url("/tmp/foo", "https://example.com/abc/def.ts") == "/tmp/foo/abc/def.ts"
 
 
 # test for join

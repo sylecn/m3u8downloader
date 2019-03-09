@@ -35,6 +35,16 @@ logger = logging.getLogger(__name__)
 SESSION = requests.Session()
 
 
+def get_local_file_for_url(tempdir, url):
+    """get absolute local file path for given url.
+
+    """
+    path = get_url_path(url)
+    if path.startswith("/"):
+        path = path[1:]
+    return os.path.normpath(os.path.join(tempdir, path))
+
+
 def get_default_cache_dir():
     """get platform based default cache dir.
 
@@ -132,7 +142,7 @@ class M3u8Downloader:
         # {full_url: local_file}
         self.fragments = OrderedDict()
 
-    def drop_http_link_in_m3u8_file(self, local_m3u8_filename):
+    def rewrite_http_link_in_m3u8_file(self, local_m3u8_filename, m3u8_url):
         """rewrite fragment url to local relative file path.
 
         """
@@ -147,16 +157,10 @@ class M3u8Downloader:
                     f.write(line)
                     f.write('\n')
                 else:
-                    f.write(self.get_local_file_for_url(line))
+                    f.write(get_local_file_for_url(self.tempdir,
+                                                   urljoin(m3u8_url, line)))
                     f.write('\n')
-        logger.info("http links modified in m3u8 file: %s", local_m3u8_filename)
-
-    def get_local_file_for_url(self, url):
-        """get absolute local file path for given url.
-
-        """
-        return os.path.normpath(
-            os.path.join(self.tempdir, "." + get_url_path(url)))
+        logger.info("http links rewrote in m3u8 file: %s", local_m3u8_filename)
 
     def start(self):
         self.download_m3u8_link(self.start_url)
@@ -190,9 +194,9 @@ class M3u8Downloader:
             local resource absolute path filename.
 
         """
-        local_file = self.get_local_file_for_url(remote_file_url)
+        local_file = get_local_file_for_url(self.tempdir, remote_file_url)
         if os.path.exists(local_file):
-            logger.info("skip downloaded resource: %s", remote_file_url)
+            logger.debug("skip downloaded resource: %s", remote_file_url)
             return local_file
         content = get_url_content(remote_file_url)
         ensure_dir_exists_for(local_file)
@@ -276,7 +280,7 @@ class M3u8Downloader:
 
         """
         self.media_playlist_localfile = self.mirror_url_resource(url)
-        self.drop_http_link_in_m3u8_file(self.media_playlist_localfile)
+        self.rewrite_http_link_in_m3u8_file(self.media_playlist_localfile, url)
         if content is None:
             content = get_url_content(url)
 

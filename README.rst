@@ -79,6 +79,10 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.7.8 2019-03-09
+
+  - bugfix: fragment url rewrite fail for some cases
+
 * v0.7.7 2019-03-08
 
   - bugfix: always rewrite fragment url to local abs path
