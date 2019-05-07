@@ -79,9 +79,10 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
-* v0.8.2
+* v0.8.3
 
-  - bugfix: ensure temp dir name is always valid for windows platform.
+  - bugfix: ensure output file name and temp dir name is always valid for
+    windows platform.
 
 * v0.8.1
 
