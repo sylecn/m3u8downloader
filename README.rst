@@ -79,6 +79,10 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.8.2
+
+  - bugfix: ensure temp dir name is always valid for windows platform.
+
 * v0.8.1
 
   - bugfix: should rewrite key uri to local file path.

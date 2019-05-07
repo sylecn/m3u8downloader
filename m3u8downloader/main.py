@@ -151,13 +151,48 @@ def rewrite_key_uri(tempdir, m3u8_url, key_line):
     return prefix + local_key_file + suffix
 
 
+def safe_dir_name(name):
+    """replace special characters in string so it can be used as dir name.
+
+    Args:
+        name: the string that will be used as dir name.
+
+    Return:
+        a string that is similar to original string and can be used as dir
+        name.
+
+    """
+    if sys.platform == 'win32':
+        # see https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file
+        replace_chars = {
+            '<': '《',
+            '>': '》',
+            ':': '：',
+            '"': '“',
+            '/': '_',
+            '\\': '_',
+            '|': '_',
+            '?': '？',
+            '*': '_',
+        }
+        for k, v in replace_chars.items():
+            name = name.replace(k, v)
+    else:
+        replace_chars = {
+            '/': '_',
+        }
+        for k, v in replace_chars.items():
+            name = name.replace(k, v)
+    return name
+
+
 class M3u8Downloader:
     def __init__(self, url, output_filename, tempdir=".", poolsize=5):
         self.start_url = url
         logger.debug("output_filename=%s", output_filename)
         self.output_filename = get_fullpath(output_filename)
         self.tempdir = get_fullpath(
-            os.path.join(tempdir, get_basename(output_filename)))
+            os.path.join(tempdir, safe_dir_name(get_basename(output_filename))))
         try:
             os.makedirs(self.tempdir, exist_ok=True)
             logger.debug("using temp dir at: %s", self.tempdir)

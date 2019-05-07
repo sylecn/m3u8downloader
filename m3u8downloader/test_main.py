@@ -6,6 +6,7 @@
 """
 
 import os.path
+import sys
 
 from m3u8downloader.main import get_suffix_from_url
 from m3u8downloader.main import is_higher_resolution
@@ -14,6 +15,13 @@ from m3u8downloader.main import get_basename
 from m3u8downloader.main import get_fullpath
 from m3u8downloader.main import get_local_file_for_url
 from m3u8downloader.main import rewrite_key_uri
+from m3u8downloader.main import safe_dir_name
+
+
+def test_safe_dir_name():
+    assert safe_dir_name('abc/def/ghi') == 'abc_def_ghi'
+    if sys.platform == 'win32':
+        assert safe_dir_name('abc:def:ghi > jk') == 'abc：def：ghi 》 jk'
 
 
 def test_rewrite_key_uri():
