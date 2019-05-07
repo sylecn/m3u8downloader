@@ -122,6 +122,35 @@ def get_fullpath(filename):
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filename)))
 
 
+def rewrite_key_uri(tempdir, m3u8_url, key_line):
+    """rewrite key URI in given '#EXT-X-KEY:' line.
+
+    Args:
+        tempdir: temp download dir.
+        m3u8_url: playlist url.
+        key_line: the line in m3u8 file that contains an encrypt key.
+
+    Return:
+        a new line with URI rewritten to local path.
+
+    """
+    pattern = re.compile(r'^(.*URI=")([^"]+)(".*)$')
+    mo = pattern.match(key_line)
+    if not mo:
+        raise RuntimeError("key line doesn't have URI")
+    prefix = mo.group(1)
+    uri = mo.group(2)
+    suffix = mo.group(3)
+
+    url = urljoin(m3u8_url, uri)
+    local_key_file = get_local_file_for_url(tempdir, url)
+    if re.match('^.:\\\\', local_key_file):
+        # in windows, backward slash won't work in key URI. ffmpeg doesn't
+        # accept backward slash.
+        local_key_file = local_key_file.replace('\\', '/')
+    return prefix + local_key_file + suffix
+
+
 class M3u8Downloader:
     def __init__(self, url, output_filename, tempdir=".", poolsize=5):
         self.start_url = url
@@ -151,7 +180,10 @@ class M3u8Downloader:
         with open(local_m3u8_filename, 'w') as f:
             for line in content.split('\n'):
                 if line.startswith('#'):
-                    f.write(line)
+                    if line.startswith('#EXT-X-KEY:'):
+                        f.write(rewrite_key_uri(self.tempdir, m3u8_url, line))
+                    else:
+                        f.write(line)
                     f.write('\n')
                 elif line.strip() == '':
                     f.write(line)
@@ -183,26 +215,32 @@ class M3u8Downloader:
             sys.exit(proc.returncode)
         logger.info("mp4 file created, size=%.1fMiB, filename=%s",
                     filesizeMiB(target_mp4), target_mp4)
-        logger.info("Running: rm -rf \"%s\"", self.tempdir)
-        subprocess.run(["/bin/rm", "-rf", self.tempdir])
+        logger.info("Removing temp files in dir: \"%s\"", self.tempdir)
+        if os.path.exists("/bin/rm"):
+            subprocess.run(["/bin/rm", "-rf", self.tempdir])
+        elif os.path.exists("C:/Windows/SysWOW64/cmd.exe"):
+            subprocess.run(["rd", "/s", "/q", self.tempdir], shell=True)
         logger.info("temp files removed")
 
     def mirror_url_resource(self, remote_file_url):
         """download remote file and replicate the same dir structure locally.
 
         Return:
-            local resource absolute path filename.
+            (local_file_path, use_existing_file)
+            local_file_path: local resource absolute path filename.
+            use_existing_file: True if local existing file is used and
+                               download is skipped.
 
         """
         local_file = get_local_file_for_url(self.tempdir, remote_file_url)
         if os.path.exists(local_file):
             logger.debug("skip downloaded resource: %s", remote_file_url)
-            return local_file
+            return local_file, True
         content = get_url_content(remote_file_url)
         ensure_dir_exists_for(local_file)
         with open(local_file, 'wb') as f:
             f.write(content)
-        return local_file
+        return local_file, False
 
     def download_key(self, url, key_line):
         """download key.
@@ -219,16 +257,20 @@ class M3u8Downloader:
             raise RuntimeError("key line doesn't have URI")
         uri = mo.group(1)
         key_url = urljoin(url, uri)
-        local_key_file = self.mirror_url_resource(key_url)
-        logger.debug("key downloaded at: %s", local_key_file)
+        local_key_file, reuse = self.mirror_url_resource(key_url)
+        if not reuse:
+            logger.debug("key downloaded at: %s", local_key_file)
 
     def download_fragment(self, url):
         """download a video fragment.
 
         """
-        fragment_full_name = self.mirror_url_resource(url)
+        fragment_full_name, reuse = self.mirror_url_resource(url)
         if fragment_full_name:
-            logger.debug("fragment created at: %s", fragment_full_name)
+            if reuse:
+                logger.debug("reuse fragment at: %s", fragment_full_name)
+            else:
+                logger.debug("fragment created at: %s", fragment_full_name)
         return (url, fragment_full_name)
 
     def fragment_downloaded(self, result):
@@ -278,9 +320,15 @@ class M3u8Downloader:
     def process_media_playlist(self, url, content=None):
         """replicate every file on the playlist in local temp dir.
 
+        Args:
+            url: media playlist url
+            content: the playlist content for resource at the url.
+
         """
-        self.media_playlist_localfile = self.mirror_url_resource(url)
-        self.rewrite_http_link_in_m3u8_file(self.media_playlist_localfile, url)
+        self.media_playlist_localfile, reuse = self.mirror_url_resource(url)
+        if not reuse:
+            self.rewrite_http_link_in_m3u8_file(
+                self.media_playlist_localfile, url)
         if content is None:
             content = get_url_content(url)
 

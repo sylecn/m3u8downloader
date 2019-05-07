@@ -32,8 +32,8 @@ def load_logger_config():
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s %(message)s',
         level=level)
-    logging.info("Create log dir %s failed. Using basic config, level=%s",
-                 logdir, level)
+    logging.debug("log dir %s doesn't exist. Using basic config with level=%s",
+                  logdir, level)
 
 
 logging.captureWarnings(True)

@@ -13,6 +13,15 @@ from m3u8downloader.main import get_url_path
 from m3u8downloader.main import get_basename
 from m3u8downloader.main import get_fullpath
 from m3u8downloader.main import get_local_file_for_url
+from m3u8downloader.main import rewrite_key_uri
+
+
+def test_rewrite_key_uri():
+    assert rewrite_key_uri("/tmp/foo", "https://example.com/foobar/foo.m3u8", "#EXT-X-KEY:METHOD=AES-128,URI=\"foo.key\"") == "#EXT-X-KEY:METHOD=AES-128,URI=\"/tmp/foo/foobar/foo.key\""
+    assert rewrite_key_uri("/tmp/foo", "https://example.com/foo.m3u8", "#EXT-X-KEY:METHOD=AES-128,URI=\"foo.key\"") == "#EXT-X-KEY:METHOD=AES-128,URI=\"/tmp/foo/foo.key\""
+    assert rewrite_key_uri("/tmp/foo", "https://example.com/foobar/foo.m3u8", "#EXT-X-KEY:METHOD=AES-128,URI=\"/abc/foo.key\"") == "#EXT-X-KEY:METHOD=AES-128,URI=\"/tmp/foo/abc/foo.key\""
+    assert rewrite_key_uri("/tmp/foo", "https://example.com/foobar/foo.m3u8", "#EXT-X-KEY:METHOD=AES-128,URI=\"https://example.com/abc/foo.key\"") == "#EXT-X-KEY:METHOD=AES-128,URI=\"/tmp/foo/abc/foo.key\""
+    assert rewrite_key_uri("C:\\Users\\foo\\temp", "https://example.com/foobar/foo.m3u8", "#EXT-X-KEY:METHOD=AES-128,URI=\"https://example.com/abc/foo.key\"") == "#EXT-X-KEY:METHOD=AES-128,URI=\"C:/Users/foo/temp/abc/foo.key\""
 
 
 # test for get_local_file_for_url

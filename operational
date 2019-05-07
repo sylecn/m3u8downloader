@@ -1,6 +1,6 @@
 * COMMENT -*- mode: org -*-
 #+Date: 2019-03-02
-Time-stamp: <2019-03-09>
+Time-stamp: <2019-05-07>
 #+STARTUP: content
 * notes                                                               :entry:
 * later                                                               :entry:
@@ -40,6 +40,24 @@ to handle it on ryzen5.
 * current                                                             :entry:
 ** 
 * done                                                                :entry:
+** 2019-05-07 bug: should always rewrite key URI to local key file.
+- in windows, use forward slash in quotes. backward slash doesn't work with
+  ffmpeg on windows.
+- when m3u8 file already exists on disk, don't rewrite key uri again, or make
+  it isomorphic.
+
+** 2019-05-07 fix "rm -rf" on windows.
+- "rm -rf" tempdir after download won't work because windows doesn't have rm
+  command.
+
+  I don't want to use shutil.rmtree().  I think it removes file one by one in
+  python code. which is not efficient at all.
+
+  mkdir ~/abc
+  subprocess.run(["rd", "/s", "/q", "C:\\Users\\sylecn\\abc"], shell=True)
+
+- 
+
 ** 2019-03-09 fragment url rewrite still have problem.
 with just the relative path, it can't decide the local path correctly.
 I need to pass in the media file's url.
