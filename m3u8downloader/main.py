@@ -39,6 +39,10 @@ def get_local_file_for_url(tempdir, url):
     """get absolute local file path for given url.
 
     """
+    if url.startswith(tempdir):
+        # avoid rewrite m3u8 path if it has already been rewritten in previous
+        # runs.
+        return url
     path = get_url_path(url)
     if path.startswith("/"):
         path = path[1:]
@@ -310,7 +314,9 @@ class M3u8Downloader:
         uri = mo.group(1)
         key_url = urljoin(url, uri)
         local_key_file, reuse = self.mirror_url_resource(key_url)
-        if not reuse:
+        if reuse:
+            logger.debug("reuse key at: %s", local_key_file)
+        else:
             logger.debug("key downloaded at: %s", local_key_file)
 
     def download_fragment(self, url):
@@ -377,10 +383,10 @@ class M3u8Downloader:
             content: the playlist content for resource at the url.
 
         """
-        self.media_playlist_localfile, reuse = self.mirror_url_resource(url)
-        if not reuse:
-            self.rewrite_http_link_in_m3u8_file(
-                self.media_playlist_localfile, url)
+        self.media_playlist_localfile, _ = self.mirror_url_resource(url)
+        # always try rewrite because we can't be sure whether the copy in
+        # cache dir has been rewritten yet.
+        self.rewrite_http_link_in_m3u8_file(self.media_playlist_localfile, url)
         if content is None:
             content = get_url_content(url)
 
