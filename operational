@@ -1,8 +1,14 @@
 * COMMENT -*- mode: org -*-
 #+Date: 2019-03-02
-Time-stamp: <2019-05-07>
+Time-stamp: <2020-05-08>
 #+STARTUP: content
 * notes                                                               :entry:
+** 2020-05-08 how to distribute pkg on pypi?				:doc:
+- test the application
+- update ChangeLog section in README.rst
+- make git commit, push it.
+- make upload
+
 * later                                                               :entry:
 ** 2019-03-03 create a chrome extension, click button to send page url to ~/bin/mm
 to handle it on ryzen5.
@@ -39,7 +45,13 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
+** 2020-05-08 add travis CI for this project.
+- add travis CI to run unit tests on linux and windows.
+- add badge in README.rst
 * done                                                                :entry:
+** 2020-05-08 make project source code public on gitlab.
+- any sensitive data in this repo? nope.
+- remove some unneeded config files.
 ** 2019-05-07 bug: should always rewrite key URI to local key file.
 - in windows, use forward slash in quotes. backward slash doesn't work with
   ffmpeg on windows.
