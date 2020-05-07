@@ -79,6 +79,14 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.8.4
+
+  - minor bugfix: still try rewrite path when using m3u8 file from cache.
+    when rewrite path in m3u8 file, do not rewrite if path has already been
+    rewritten before. This is a minor change, it only fix things when process
+    is killed when .m3u8 file is downloaded but path in it has not been
+    rewritten yet.
+
 * v0.8.3
 
   - bugfix: ensure output file name and temp dir name is always valid for
