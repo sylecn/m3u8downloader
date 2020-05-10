@@ -79,6 +79,11 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.8.6
+
+  - fix a regression in v0.8.4. the v0.8.4 release should be avoided. Either
+    use v0.8.3 or v0.8.6+
+
 * v0.8.4
 
   - minor bugfix: still try rewrite path when using m3u8 file from cache.

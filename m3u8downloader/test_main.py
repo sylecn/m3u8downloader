@@ -40,7 +40,7 @@ def test_get_local_file_for_url():
     assert get_local_file_for_url("/tmp/foo", "./def.ts") == "/tmp/foo/def.ts"
     assert get_local_file_for_url("/tmp/foo", "http://example.com/abc/def.ts") == "/tmp/foo/abc/def.ts"
     assert get_local_file_for_url("/tmp/foo", "https://example.com/abc/def.ts") == "/tmp/foo/abc/def.ts"
-    assert get_local_file_for_url("/tmp/foo", "/tmp/foo/a/b/c") == "/tmp/foo/a/b/c"
+    assert get_local_file_for_url("/tmp/foo", "https://example.com/abc/def.ts", "/tmp/foo/abc/def.ts") == "/tmp/foo/abc/def.ts"
 
 
 # test for join

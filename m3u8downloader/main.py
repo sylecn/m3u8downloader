@@ -35,14 +35,20 @@ logger = logging.getLogger(__name__)
 SESSION = requests.Session()
 
 
-def get_local_file_for_url(tempdir, url):
+def get_local_file_for_url(tempdir, url, path_line=None):
     """get absolute local file path for given url.
 
+    Args:
+        tempdir: temp dir to store downloaded files.
+        url: resource url. includes protocol, host, path.
+        path_line: optional, the path as it appears in the m3u8 file.
+                   could be http relative path, local file path etc.
+
     """
-    if url.startswith(tempdir):
+    if path_line and path_line.startswith(tempdir):
         # avoid rewrite m3u8 path if it has already been rewritten in previous
         # runs.
-        return url
+        return path_line
     path = get_url_path(url)
     if path.startswith("/"):
         path = path[1:]
@@ -147,7 +153,7 @@ def rewrite_key_uri(tempdir, m3u8_url, key_line):
     suffix = mo.group(3)
 
     url = urljoin(m3u8_url, uri)
-    local_key_file = get_local_file_for_url(tempdir, url)
+    local_key_file = get_local_file_for_url(tempdir, url, key_line)
     if re.match('^.:\\\\', local_key_file):
         # in windows, backward slash won't work in key URI. ffmpeg doesn't
         # accept backward slash.
@@ -246,7 +252,8 @@ class M3u8Downloader:
                     f.write('\n')
                 else:
                     f.write(get_local_file_for_url(self.tempdir,
-                                                   urljoin(m3u8_url, line)))
+                                                   urljoin(m3u8_url, line),
+                                                   line))
                     f.write('\n')
         logger.info("http links rewrote in m3u8 file: %s", local_m3u8_filename)
 
