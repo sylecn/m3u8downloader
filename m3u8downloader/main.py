@@ -152,6 +152,10 @@ def rewrite_key_uri(tempdir, m3u8_url, key_line):
     uri = mo.group(2)
     suffix = mo.group(3)
 
+    if uri and uri.startswith(tempdir):
+        # already using local file path in uri.
+        return key_line
+
     url = urljoin(m3u8_url, uri)
     local_key_file = get_local_file_for_url(tempdir, url, key_line)
     if re.match('^.:\\\\', local_key_file):
