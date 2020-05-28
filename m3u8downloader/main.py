@@ -108,6 +108,8 @@ def get_url_content(url):
     """
     logger.debug("GET %s", url)
     r = SESSION.get(url)
+    if not r.ok:
+        raise requests.HTTPError(r)
     return r.content
 
 

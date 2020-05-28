@@ -1,6 +1,6 @@
 * COMMENT -*- mode: org -*-
 #+Date: 2019-03-02
-Time-stamp: <2020-05-13>
+Time-stamp: <2020-05-28>
 #+STARTUP: content
 * notes                                                               :entry:
 ** 2020-05-08 how to distribute pkg on pypi?				:doc:
@@ -52,6 +52,24 @@ rewrite_key_uri()
 - add travis CI to run unit tests on linux and windows.
 - add badge in README.rst
 * done                                                                :entry:
+** 2020-05-14 m3u8downloader. when get HTTP 404 for m3u8 link. show an error and stop.
+- currently when fetch m3u8 returns 404 with http body, it tries to download
+  every line from html source and create that many temp files. that is
+  useless.
+- 2020-05-28
+  @retry()
+  main.get_url_content()
+
+  when server return 404, will it retry?
+  if not, I should raise exception.
+
+  make shell
+  from m3u8downloader import main
+  r = main.get_url_content("https://entd.cn/404.html")
+  r
+
+  it doesn't raise exception.
+
 ** 2020-05-08 make project source code public on gitlab.
 - any sensitive data in this repo? nope.
 - remove some unneeded config files.
