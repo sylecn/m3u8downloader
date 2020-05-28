@@ -45,13 +45,15 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
-** 2020-05-13 bug: key URI may be rewritten twice.
-rewrite_key_uri()
-
 ** 2020-05-08 add travis CI for this project.
 - add travis CI to run unit tests on linux and windows.
 - add badge in README.rst
 * done                                                                :entry:
+** 2020-05-13 bug: key URI may be rewritten twice.
+rewrite_key_uri()
+
+- 2020-05-28 it's fixed in earlier commits.
+
 ** 2020-05-14 m3u8downloader. when get HTTP 404 for m3u8 link. show an error and stop.
 - currently when fetch m3u8 returns 404 with http body, it tries to download
   every line from html source and create that many temp files. that is
