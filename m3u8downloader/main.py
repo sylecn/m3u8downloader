@@ -457,6 +457,12 @@ class M3u8Downloader:
 def main():
     parser = argparse.ArgumentParser(prog='m3u8downloader',
                                      description="download video at m3u8 url")
+    DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'
+    parser.add_argument('--user-agent',
+                        default=DEFAULT_USER_AGENT,
+                        help='specify User-Agent header for HTTP requests')
+    parser.add_argument('--origin',
+                        help='specify Origin header for HTTP requests')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + m3u8downloader.__version__)
     parser.add_argument('--debug', action='store_true', help='enable debug log')
@@ -474,7 +480,9 @@ def main():
     if args.debug:
         logging.getLogger("").setLevel(logging.DEBUG)
 
-    SESSION.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'})
+    SESSION.headers.update({'User-Agent': args.user_agent})
+    if args.origin:
+        SESSION.headers.update({'Origin': args.origin})
     downloader = M3u8Downloader(args.url, args.output,
                                 tempdir=args.tempdir,
                                 poolsize=args.concurrency)

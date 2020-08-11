@@ -79,6 +79,10 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.9.0
+
+  - add support for --user-agent and --origin parameters
+
 * v0.8.7
 
   - bugfix: do not rewrite KEY URI if it is already a local file path.
