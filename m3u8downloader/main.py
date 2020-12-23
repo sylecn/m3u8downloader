@@ -472,7 +472,7 @@ def main():
         '--tempdir', default=os.path.join(get_default_cache_dir(),
                                           'm3u8downloader'),
         help='temp dir, used to store .ts files before combing them into mp4')
-    parser.add_argument('--concurrency', '-c', metavar='N', default=5,
+    parser.add_argument('--concurrency', '-c', metavar='N', type=int, default=5,
                         help='number of fragments to download at a time')
     parser.add_argument('url', metavar='URL', help='the m3u8 url')
     args = parser.parse_args()
