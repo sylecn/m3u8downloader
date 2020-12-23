@@ -24,6 +24,7 @@ import multiprocessing
 import multiprocessing.queues
 import logging
 import platform
+import signal
 
 import requests
 from wells.utils import retry
@@ -454,6 +455,12 @@ class M3u8Downloader:
             self.process_media_playlist(url, content)
 
 
+def signal_handler(sig, frame):
+    # Note: subprocess will auto exit when parent process exit.
+    logger.info("Exiting on SIGINT/SIGTERM...")
+    sys.exit(0)
+
+
 def main():
     parser = argparse.ArgumentParser(prog='m3u8downloader',
                                      description="download video at m3u8 url")
@@ -479,6 +486,10 @@ def main():
 
     if args.debug:
         logging.getLogger("").setLevel(logging.DEBUG)
+
+    logger.debug("setup signal_handler for SIGINT and SIGTERM")
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
     SESSION.headers.update({'User-Agent': args.user_agent})
     if args.origin:
