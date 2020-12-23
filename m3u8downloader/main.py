@@ -30,7 +30,9 @@ import requests
 from wells.utils import retry
 
 import m3u8downloader
-import m3u8downloader.configlogger    # pylint: disable=unused-import
+import m3u8downloader.configlogger
+from m3u8downloader.config import CONF
+
 
 logger = logging.getLogger(__name__)
 SESSION = requests.Session()
@@ -464,28 +466,31 @@ def signal_handler(sig, frame):
 def main():
     parser = argparse.ArgumentParser(prog='m3u8downloader',
                                      description="download video at m3u8 url")
-    DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'
     parser.add_argument('--user-agent',
-                        default=DEFAULT_USER_AGENT,
+                        default=CONF.getstr("user_agent"),
                         help='specify User-Agent header for HTTP requests')
     parser.add_argument('--origin',
+                        default=CONF.getstr("origin"),
                         help='specify Origin header for HTTP requests')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + m3u8downloader.__version__)
-    parser.add_argument('--debug', action='store_true', help='enable debug log')
+    parser.add_argument('--debug', action='store_true',
+                        default=CONF.getbool("debug"),
+                        help='enable debug log')
     parser.add_argument('--output', '-o', required=True,
                         help='output video filename, e.g. ~/Downloads/foo.mp4')
     parser.add_argument(
-        '--tempdir', default=os.path.join(get_default_cache_dir(),
-                                          'm3u8downloader'),
+        '--tempdir', default=CONF.getstr("tempdir"),
         help='temp dir, used to store .ts files before combing them into mp4')
-    parser.add_argument('--concurrency', '-c', metavar='N', type=int, default=5,
+    parser.add_argument('--concurrency', '-c', metavar='N', type=int,
+                        default=CONF.getint("concurrency"),
                         help='number of fragments to download at a time')
     parser.add_argument('url', metavar='URL', help='the m3u8 url')
     args = parser.parse_args()
 
     if args.debug:
         logging.getLogger("").setLevel(logging.DEBUG)
+        logging.debug("debug set to true")
 
     logger.debug("setup signal_handler for SIGINT and SIGTERM")
     signal.signal(signal.SIGINT, signal_handler)
@@ -494,8 +499,10 @@ def main():
     SESSION.headers.update({'User-Agent': args.user_agent})
     if args.origin:
         SESSION.headers.update({'Origin': args.origin})
+    tempdir = args.tempdir or os.path.join(get_default_cache_dir(),
+                                           'm3u8downloader')
     downloader = M3u8Downloader(args.url, args.output,
-                                tempdir=args.tempdir,
+                                tempdir=tempdir,
                                 poolsize=args.concurrency)
     downloader.start()
 

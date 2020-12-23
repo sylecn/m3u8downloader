@@ -80,6 +80,7 @@ sanity-check: bootstrap
 check-coding-style: bootstrap-dev
 	$(PEP8) $(PYTHON_MODULES)
 	$(PYLINT) -E $(PYTHON_MODULES)
+	$(PYTHON) m3u8downloader/config.py
 pylint-full: check-coding-style
 	$(PYLINT) $(PYTHON_MODULES)
 test: check-coding-style

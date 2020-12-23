@@ -43,8 +43,8 @@ Here is built-in command line help:
 
 .. code-block:: bash
 
-   usage: m3u8downloader [-h] [--version] [--debug] --output OUTPUT
-                         [--tempdir TEMPDIR] [--concurrency N]
+   usage: m3u8downloader [-h] [--user-agent USER_AGENT] [--origin ORIGIN] [--version]
+                         [--debug] --output OUTPUT [--tempdir TEMPDIR] [--concurrency N]
                          URL
    
    download video at m3u8 url
@@ -54,19 +54,56 @@ Here is built-in command line help:
    
    optional arguments:
      -h, --help            show this help message and exit
+     --user-agent USER_AGENT
+                           specify User-Agent header for HTTP requests
+     --origin ORIGIN       specify Origin header for HTTP requests
      --version             show program's version number and exit
      --debug               enable debug log
      --output OUTPUT, -o OUTPUT
                            output video filename, e.g. ~/Downloads/foo.mp4
-     --tempdir TEMPDIR     temp dir, used to store .ts files before combing them
-                           into mp4
+     --tempdir TEMPDIR     temp dir, used to store .ts files before combing them into mp4
      --concurrency N, -c N
                            number of fragments to download at a time
 
 Documentation
 -------------
 
-This command line tool doesn't have extra documents.
+Config File Support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You may use a config file to specify some command line arguments.
+
+- supported config files, later takes precedence:
+
+     - /etc/m3u8downloader.conf
+     - /etc/m3u8downloader/m3u8downloader.conf
+     - ~/.config/m3u8downloader.conf
+     - ~/.config/m3u8downloader/m3u8downloader.conf
+
+- config file format
+
+  .. code-block:: bash
+
+     # comments and empty lines are ignored.
+     KEY=VALUE
+     # or
+     KEY="VALUE"
+     # boolean values may be true|false|yes|no|1|0
+
+- supported keys:
+
+  .. code-block:: bash
+
+     user_agent=<string>
+     origin=<string>
+     tempdir=<string>
+     concurrency=<int>
+     debug=<true|false>
+
+  Their meaning is the same as their counterpart in command line arguments.
+
+- if a config is specified both in config file and command line arguments,
+  command line arguments will take precedence.
 
 Limitations
 -------------
@@ -78,6 +115,11 @@ added to the HLS spec which this tool isn't aware of.
 
 ChangeLog
 ---------
+
+* v0.10.0
+
+  - add support for config file
+  - handle Ctrl+C and SIGTERM properly
 
 * v0.9.0
 

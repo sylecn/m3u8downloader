@@ -9,6 +9,9 @@ Time-stamp: <2020-12-23>
 - make git commit, push it.
 - make upload
 
+** 2020-12-23 config file path and format                               :doc:
+see README.rst file Documentation section.
+
 * later                                                               :entry:
 ** 2019-03-03 create a chrome extension, click button to send page url to ~/bin/mm
 to handle it on ryzen5.
@@ -49,6 +52,17 @@ to handle it on ryzen5.
 - add travis CI to run unit tests on linux and windows.
 - add badge in README.rst
 * done                                                                :entry:
+** 2020-12-23 feature request, allow set default parameters via config file.
+--user-agent USER_AGENT
+--origin ORIGIN
+--tempdir TEMPDIR
+--concurrency N
+
+- wells already support that. use wells or built-in configparser module?
+
+  use wells.
+  wells is already in requirements.txt file.
+
 ** 2020-12-23 bug report by Tithen Firion email. Can't abort with Ctrl+C.
 - problems
   - how to stop subprocess in the bg?
