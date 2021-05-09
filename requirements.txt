@@ -1,4 +1,4 @@
-wells==1.5.0
-requests==2.25.1
+wells>=1.5.0
+requests>=2.25.1
 # six==1.12.0
 # raven==6.0.0

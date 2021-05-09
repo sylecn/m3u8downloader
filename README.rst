@@ -116,6 +116,10 @@ added to the HLS spec which this tool isn't aware of.
 ChangeLog
 ---------
 
+* v0.10.1
+
+  - lifted lib version restriction
+
 * v0.10.0
 
   - add support for config file
