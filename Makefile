@@ -8,7 +8,7 @@ PYTHON := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 
 DEFAULT_PYTHON ?= $(shell ./utils/choose_default_python.sh)
-VIRTUALENV := $(wildcard ./utils/virtualenv-*/virtualenv.py)
+VIRTUALENV := -m venv
 
 REQUIREMENTS := -r requirements.txt
 DEV_REQUIREMENTS := -r requirements-dev.txt
@@ -43,7 +43,7 @@ shell:
 	$(PYTHON) -i
 
 venv:
-	test -d $(VENV) || $(DEFAULT_PYTHON) $(VIRTUALENV) --no-download -q $(VENV)
+	test -d $(VENV) || $(DEFAULT_PYTHON) $(VIRTUALENV) $(VENV)
 requirements:
 	@if [ -d wheelhouse ]; then \
 		$(PIP) install -q --isolated --no-index --find-links=wheelhouse $(REQUIREMENTS); \

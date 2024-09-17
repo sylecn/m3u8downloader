@@ -44,7 +44,8 @@ Here is built-in command line help:
 .. code-block:: bash
 
    usage: m3u8downloader [-h] [--user-agent USER_AGENT] [--origin ORIGIN] [--version]
-                         [--debug] --output OUTPUT [--tempdir TEMPDIR] [--concurrency N]
+                         [--debug] --output OUTPUT [--tempdir TEMPDIR] [--keep]
+                         [--concurrency N]
                          URL
    
    download video at m3u8 url
@@ -62,6 +63,7 @@ Here is built-in command line help:
      --output OUTPUT, -o OUTPUT
                            output video filename, e.g. ~/Downloads/foo.mp4
      --tempdir TEMPDIR     temp dir, used to store .ts files before combing them into mp4
+     --keep                keep files in tempdir after converting to mp4
      --concurrency N, -c N
                            number of fragments to download at a time
 

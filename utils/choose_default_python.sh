@@ -34,21 +34,9 @@ first_existing_file()
 if first_existing_file \
         ~/bin/python3 \
         ~/opt/bin/python3 \
-        /opt/python3.7/bin/python \
-        /opt/python3.6/bin/python \
-        /opt/python3.5/bin/python \
-	/usr/local/bin/python3.7 \
-	/usr/local/bin/python3.6 \
-	/usr/local/bin/python3.5 \
 	/usr/local/bin/python3 \
         /usr/bin/python3 \
-        ~/bin/python2.7 \
-        ~/bin/python \
-        ~/opt/bin/python2.7 \
-        /opt/python2.7/bin/python \
-	/usr/bin/local/python2.7 \
-	/usr/bin/local/python \
-	/usr/bin/python2.7 \
+	/usr/bin/local/python3 \
         /usr/bin/python; then
 	echo "$re"
 else

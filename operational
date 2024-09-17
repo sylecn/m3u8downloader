@@ -51,14 +51,6 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
-** 2024-09-17 when it convert my file into mp4 i lose the sound of the video
-could you please add feature to be able to get the ts/m3u8 file without convert
-
-https://player.vimeo.com/external/469223174.m3u8?s=d4b0fb2caa776830d55ba9de0bec293883b34f6f
-bug reported by Max Alex.
-
-I think a --keep option is possible.
-
 ** 2024-09-17 shell command escape issue when filename contains special characters
 - bug report by Steven Van Ingelgem.
   #+begin_src python
@@ -72,6 +64,14 @@ I think a --keep option is possible.
 - add travis CI to run unit tests on linux and windows.
 - add badge in README.rst
 * done                                                                :entry:
+** 2024-09-17 when it convert my file into mp4 i lose the sound of the video
+could you please add feature to be able to get the ts/m3u8 file without convert
+
+https://player.vimeo.com/external/469223174.m3u8?s=d4b0fb2caa776830d55ba9de0bec293883b34f6f
+bug reported by Max Alex.
+
+I think a --keep option is possible.
+
 ** 2024-09-17 code pushed to github. this code seems being used by more than a few people.
 they even tried to send bug report and patch.
 - push to github allow easier coop.

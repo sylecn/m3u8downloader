@@ -26,11 +26,12 @@ if TESTING:
     logging.getLogger('').setLevel(logging.ERROR)
 
 DEFAULTS = {
-    "user_agent": 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36',
+    "user_agent": 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     "origin": "",
     "tempdir": "",
     "concurrency": "5",
     "debug": "false",
+    "keep": "false",
 }
 
 OPTIONAL_KEYS = list(DEFAULTS.keys())

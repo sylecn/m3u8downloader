@@ -212,7 +212,7 @@ def safe_file_name(name):
 
 
 class M3u8Downloader:
-    def __init__(self, url, output_filename, tempdir=".", poolsize=5):
+    def __init__(self, url, output_filename, tempdir=".", poolsize=5, keep=False):
         self.start_url = url
 
         # make sure output_filename is a safe filename on platform.
@@ -238,6 +238,8 @@ class M3u8Downloader:
 
         self.media_playlist_localfile = None
         self.poolsize = poolsize
+        # whether to keep temp files after converting to mp4
+        self.keep = keep
         self.total_fragments = 0
         # {full_url: local_file}
         self.fragments = OrderedDict()
@@ -287,12 +289,13 @@ class M3u8Downloader:
             sys.exit(proc.returncode)
         logger.info("mp4 file created, size=%.1fMiB, filename=%s",
                     filesizeMiB(target_mp4), target_mp4)
-        logger.info("Removing temp files in dir: \"%s\"", self.tempdir)
-        if os.path.exists("/bin/rm"):
-            subprocess.run(["/bin/rm", "-rf", self.tempdir])
-        elif os.path.exists("C:/Windows/SysWOW64/cmd.exe"):
-            subprocess.run(["rd", "/s", "/q", self.tempdir], shell=True)
-        logger.info("temp files removed")
+        if not self.keep:
+            logger.info("Removing temp files in dir: \"%s\"", self.tempdir)
+            if os.path.exists("/bin/rm"):
+                subprocess.run(["/bin/rm", "-rf", self.tempdir])
+            elif os.path.exists("C:/Windows/SysWOW64/cmd.exe"):
+                subprocess.run(["rd", "/s", "/q", self.tempdir], shell=True)
+            logger.info("temp files removed")
 
     def mirror_url_resource(self, remote_file_url):
         """download remote file and replicate the same dir structure locally.
@@ -482,6 +485,9 @@ def main():
     parser.add_argument(
         '--tempdir', default=CONF.getstr("tempdir"),
         help='temp dir, used to store .ts files before combing them into mp4')
+    parser.add_argument(
+        '--keep', action='store_true', default=CONF.getbool("keep"),
+        help='keep files in tempdir after converting to mp4')
     parser.add_argument('--concurrency', '-c', metavar='N', type=int,
                         default=CONF.getint("concurrency"),
                         help='number of fragments to download at a time')
@@ -503,7 +509,8 @@ def main():
                                            'm3u8downloader')
     downloader = M3u8Downloader(args.url, args.output,
                                 tempdir=tempdir,
-                                poolsize=args.concurrency)
+                                poolsize=args.concurrency,
+                                keep=args.keep)
     downloader.start()
 
 
