@@ -20,8 +20,8 @@ To install m3u8downloader, simply:
 
 .. code-block:: bash
 
-   $ sudo apt install -y ffmpeg
-   $ pip install --user m3u8downloader
+   $ sudo apt install -y ffmpeg pipx
+   $ pipx install m3u8downloader
 
 
 Quick Start
@@ -112,6 +112,13 @@ This tool only parses minimum m3u8 extensions for selecting media playlist
 from master playlist, downloading key and fragments from media playlist. If a
 m3u8 file doesn't download correctly, it's probably some new extension was
 added to the HLS spec which this tool isn't aware of.
+
+Bug Report
+------------
+
+Bugs should be reported to `github issues`_.
+
+.. _github issues: https://github.com/sylecn/m3u8downloader/issues
 
 ChangeLog
 ---------

@@ -55,6 +55,9 @@ to handle it on ryzen5.
 - add travis CI to run unit tests on linux and windows.
 - add badge in README.rst
 * done                                                                :entry:
+** 2024-09-17 code pushed to github. this code seems being used by more than a few people.
+they even tried to send bug report and patch.
+- push to github allow easier coop.
 ** 2020-12-23 feature request, allow set default parameters via config file.
 --user-agent USER_AGENT
 --origin ORIGIN
