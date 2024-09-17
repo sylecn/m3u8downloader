@@ -125,6 +125,12 @@ Bugs should be reported to `github issues`_.
 ChangeLog
 ---------
 
+* v0.11.1
+
+  - add --keep option to keep temp files after converting to mp4
+  - bugfix: when on windows, properly delete temp dir when filename contains
+    special characters.
+
 * v0.10.1
 
   - lifted lib version restriction
