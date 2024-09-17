@@ -1,6 +1,7 @@
 # requirements file format
 # https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format
 # https://www.python.org/dev/peps/pep-0440/#version-specifiers
+wheel
 pytest ~= 8.3.3
 pycodestyle ~= 2.12.1
 pylint ~= 1.9.4; python_version < '3.4'
