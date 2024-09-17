@@ -17,6 +17,7 @@ import sys
 import os
 import os.path
 import subprocess
+import shutil
 import re
 from urllib.parse import urljoin, urlparse
 from collections import OrderedDict
@@ -294,7 +295,7 @@ class M3u8Downloader:
             if os.path.exists("/bin/rm"):
                 subprocess.run(["/bin/rm", "-rf", self.tempdir])
             elif os.path.exists("C:/Windows/SysWOW64/cmd.exe"):
-                subprocess.run(["rd", "/s", "/q", self.tempdir], shell=True)
+                shutil.rmtree(self.tempdir)
             logger.info("temp files removed")
 
     def mirror_url_resource(self, remote_file_url):

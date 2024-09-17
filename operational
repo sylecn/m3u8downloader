@@ -51,6 +51,10 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
+** 2020-05-08 add travis CI for this project.
+- add travis CI to run unit tests on linux and windows.
+- add badge in README.rst
+* done                                                                :entry:
 ** 2024-09-17 shell command escape issue when filename contains special characters
 - bug report by Steven Van Ingelgem.
   #+begin_src python
@@ -59,11 +63,21 @@ to handle it on ryzen5.
         shutil.rmtree(self.tempdir)
     logger.info("temp files removed")
   #+end_src
-- 
-** 2020-05-08 add travis CI for this project.
-- add travis CI to run unit tests on linux and windows.
-- add badge in README.rst
-* done                                                                :entry:
+- check all shell invoke.
+  M-x grep
+  git grep --full-name -n -F 'subprocess.'
+- it's because I have shell=True there.
+  all other invokes should be fine.
+  subprocess.run(["rd", "/s", "/q", self.tempdir], shell=True)
+
+  well, mabye just use shutil.rmtree for windows.
+
+  is there shell escape function for windows cmd shell?
+
+  shlex — Simple lexical analysis — Python 3.11.2 documentation
+  https://localdocs.emacsos.com/python3/library/shlex.html#module-shlex
+  that is for unix shell. not cmd shell.
+
 ** 2024-09-17 when it convert my file into mp4 i lose the sound of the video
 could you please add feature to be able to get the ts/m3u8 file without convert
 
