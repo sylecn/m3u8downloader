@@ -12,7 +12,6 @@ import os
 
 from wells.config import ConfigurationManger
 
-import m3u8downloader.configlogger
 
 
 logger = logging.getLogger(__name__)
@@ -23,10 +22,10 @@ DEBUGGING = os.getenv("DEBUG") == "1"
 
 # set root logger level to ERROR when running unit test.
 if TESTING:
-    logging.getLogger('').setLevel(logging.ERROR)
+    logging.getLogger("").setLevel(logging.ERROR)
 
 DEFAULTS = {
-    "user_agent": 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
     "origin": "",
     "tempdir": "",
     "concurrency": "5",
@@ -36,8 +35,7 @@ DEFAULTS = {
 
 OPTIONAL_KEYS = list(DEFAULTS.keys())
 
-REQUIRED_KEYS = [
-]
+REQUIRED_KEYS = []
 
 CONF = ConfigurationManger(
     defaults=DEFAULTS,
@@ -48,7 +46,8 @@ CONF = ConfigurationManger(
         os.path.expanduser("~/.config/m3u8downloader/m3u8downloader.conf"),
     ],
     required_keys=REQUIRED_KEYS,
-    optional_keys=OPTIONAL_KEYS)
+    optional_keys=OPTIONAL_KEYS,
+)
 
 
 def ensure_all_config_variable_defined():
@@ -61,9 +60,16 @@ def ensure_all_config_variable_defined():
     import subprocess
 
     check_pass = True
-    output = subprocess.check_output(r"""
+    output = (
+        subprocess.check_output(
+            r"""
 rgrep 'CONF\.get' m3u8downloader/ |grep -o 'CONF\.get[a-z]\+("[^)]*")'|sed 's/.*("//; s/")//'
-    """, shell=True).rstrip().decode("utf-8", 'ignore')
+    """,
+            shell=True,
+        )
+        .rstrip()
+        .decode("utf-8", "ignore")
+    )
     all_keys = REQUIRED_KEYS + OPTIONAL_KEYS
     for line in output.split("\n"):
         if line and line not in all_keys:
@@ -76,5 +82,5 @@ def main():
     ensure_all_config_variable_defined()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

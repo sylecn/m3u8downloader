@@ -24,7 +24,6 @@ from collections import OrderedDict
 import multiprocessing
 import multiprocessing.queues
 import logging
-import platform
 import signal
 
 import requests
@@ -70,7 +69,7 @@ def get_default_cache_dir():
         return os.getenv("XDG_CACHE_HOME")
     if os.getenv("LOCALAPPDATA"):
         return os.getenv("LOCALAPPDATA")
-    return os.path.expanduser('~/.cache')
+    return os.path.expanduser("~/.cache")
 
 
 def is_higher_resolution(new_resolution, old_resolution):
@@ -92,24 +91,18 @@ def filesizeMiB(filename):
 
 
 def get_url_path(url):
-    """get path part for a url.
-
-    """
+    """get path part for a url."""
     return urlparse(url).path
 
 
 def ensure_dir_exists_for(full_filename):
-    """create file's parent dir if it doesn't exist.
-
-    """
+    """create file's parent dir if it doesn't exist."""
     os.makedirs(os.path.dirname(full_filename), exist_ok=True)
 
 
 @retry(times=3, interval=[1, 5, 10])
 def get_url_content(url):
-    """fetch url, return content as bytes.
-
-    """
+    """fetch url, return content as bytes."""
     logger.debug("GET %s", url)
     r = SESSION.get(url)
     if not r.ok:
@@ -125,16 +118,12 @@ def get_suffix_from_url(url):
 
 
 def get_basename(filename):
-    """return filename with path and ext removed.
-
-    """
+    """return filename with path and ext removed."""
     return os.path.splitext(os.path.basename(filename))[0]
 
 
 def get_fullpath(filename):
-    """make a canonical absolute path filename.
-
-    """
+    """make a canonical absolute path filename."""
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filename)))
 
 
@@ -164,10 +153,10 @@ def rewrite_key_uri(tempdir, m3u8_url, key_line):
 
     url = urljoin(m3u8_url, uri)
     local_key_file = get_local_file_for_url(tempdir, url, key_line)
-    if re.match('^.:\\\\', local_key_file):
+    if re.match("^.:\\\\", local_key_file):
         # in windows, backward slash won't work in key URI. ffmpeg doesn't
         # accept backward slash.
-        local_key_file = local_key_file.replace('\\', '/')
+        local_key_file = local_key_file.replace("\\", "/")
     return prefix + local_key_file + suffix
 
 
@@ -175,15 +164,15 @@ def _windows_safe_filename(name):
     # see
     # https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file
     replace_chars = {
-        '<': '《',
-        '>': '》',
-        ':': '：',
-        '"': '“',
-        '/': '_',
-        '\\': '_',
-        '|': '_',
-        '?': '？',
-        '*': '_',
+        "<": "《",
+        ">": "》",
+        ":": "：",
+        '"': "“",
+        "/": "_",
+        "\\": "_",
+        "|": "_",
+        "?": "？",
+        "*": "_",
     }
     for k, v in replace_chars.items():
         name = name.replace(k, v)
@@ -201,11 +190,11 @@ def safe_file_name(name):
         file/dir name.
 
     """
-    if sys.platform == 'win32':
+    if sys.platform == "win32":
         name = _windows_safe_filename(name)
     else:
         replace_chars = {
-            '/': '_',
+            "/": "_",
         }
         for k, v in replace_chars.items():
             name = name.replace(k, v)
@@ -220,7 +209,8 @@ class M3u8Downloader:
         # mainly for windows.
         safe_output_filename = os.path.join(
             os.path.dirname(output_filename),
-            safe_file_name(os.path.basename(output_filename)))
+            safe_file_name(os.path.basename(output_filename)),
+        )
 
         if safe_output_filename != output_filename:
             output_filename = safe_output_filename
@@ -229,7 +219,8 @@ class M3u8Downloader:
             logger.debug("output_filename=%s", output_filename)
         self.output_filename = get_fullpath(output_filename)
         self.tempdir = get_fullpath(
-            os.path.join(tempdir, get_basename(output_filename)))
+            os.path.join(tempdir, get_basename(output_filename))
+        )
         try:
             os.makedirs(self.tempdir, exist_ok=True)
             logger.debug("using temp dir at: %s", self.tempdir)
@@ -246,27 +237,27 @@ class M3u8Downloader:
         self.fragments = OrderedDict()
 
     def rewrite_http_link_in_m3u8_file(self, local_m3u8_filename, m3u8_url):
-        """rewrite fragment url to local relative file path.
-
-        """
-        with open(local_m3u8_filename, 'r') as f:
+        """rewrite fragment url to local relative file path."""
+        with open(local_m3u8_filename, "r") as f:
             content = f.read()
-        with open(local_m3u8_filename, 'w') as f:
-            for line in content.split('\n'):
-                if line.startswith('#'):
-                    if line.startswith('#EXT-X-KEY:'):
+        with open(local_m3u8_filename, "w") as f:
+            for line in content.split("\n"):
+                if line.startswith("#"):
+                    if line.startswith("#EXT-X-KEY:"):
                         f.write(rewrite_key_uri(self.tempdir, m3u8_url, line))
                     else:
                         f.write(line)
-                    f.write('\n')
-                elif line.strip() == '':
+                    f.write("\n")
+                elif line.strip() == "":
                     f.write(line)
-                    f.write('\n')
+                    f.write("\n")
                 else:
-                    f.write(get_local_file_for_url(self.tempdir,
-                                                   urljoin(m3u8_url, line),
-                                                   line))
-                    f.write('\n')
+                    f.write(
+                        get_local_file_for_url(
+                            self.tempdir, urljoin(m3u8_url, line), line
+                        )
+                    )
+                    f.write("\n")
         logger.info("http links rewrote in m3u8 file: %s", local_m3u8_filename)
 
     def start(self):
@@ -274,24 +265,34 @@ class M3u8Downloader:
         target_mp4 = self.output_filename
         if not target_mp4.endswith(".mp4"):
             target_mp4 += ".mp4"
-        cmd = ["ffmpeg",
-               "-loglevel", "warning",
-               "-allowed_extensions", "ALL",
-               "-i", self.media_playlist_localfile,
-               "-acodec", "copy",
-               "-vcodec", "copy",
-               "-bsf:a", "aac_adtstoasc",
-               target_mp4]
+        cmd = [
+            "ffmpeg",
+            "-loglevel",
+            "warning",
+            "-allowed_extensions",
+            "ALL",
+            "-i",
+            self.media_playlist_localfile,
+            "-acodec",
+            "copy",
+            "-vcodec",
+            "copy",
+            "-bsf:a",
+            "aac_adtstoasc",
+            target_mp4,
+        ]
         logger.info("Running: %s", cmd)
         proc = subprocess.run(cmd)
         if proc.returncode != 0:
-            logger.error("run ffmpeg command failed: exitcode=%s",
-                         proc.returncode)
+            logger.error("run ffmpeg command failed: exitcode=%s", proc.returncode)
             sys.exit(proc.returncode)
-        logger.info("mp4 file created, size=%.1fMiB, filename=%s",
-                    filesizeMiB(target_mp4), target_mp4)
+        logger.info(
+            "mp4 file created, size=%.1fMiB, filename=%s",
+            filesizeMiB(target_mp4),
+            target_mp4,
+        )
         if not self.keep:
-            logger.info("Removing temp files in dir: \"%s\"", self.tempdir)
+            logger.info('Removing temp files in dir: "%s"', self.tempdir)
             if os.path.exists("/bin/rm"):
                 subprocess.run(["/bin/rm", "-rf", self.tempdir])
             elif os.path.exists("C:/Windows/SysWOW64/cmd.exe"):
@@ -314,7 +315,7 @@ class M3u8Downloader:
             return local_file, True
         content = get_url_content(remote_file_url)
         ensure_dir_exists_for(local_file)
-        with open(local_file, 'wb') as f:
+        with open(local_file, "wb") as f:
             f.write(content)
         return local_file, False
 
@@ -340,9 +341,7 @@ class M3u8Downloader:
             logger.debug("key downloaded at: %s", local_key_file)
 
     def download_fragment(self, url):
-        """download a video fragment.
-
-        """
+        """download a video fragment."""
         fragment_full_name, reuse = self.mirror_url_resource(url)
         if fragment_full_name:
             if reuse:
@@ -352,9 +351,7 @@ class M3u8Downloader:
         return (url, fragment_full_name)
 
     def fragment_downloaded(self, result):
-        """apply_async callback.
-
-        """
+        """apply_async callback."""
         url, fragment_full_name = result
         self.fragments[url] = fragment_full_name
         # progress log
@@ -362,26 +359,24 @@ class M3u8Downloader:
         if fetched_fragment == self.total_fragments:
             logger.info("100%%, %s fragments fetched", self.total_fragments)
         elif fetched_fragment % 10 == 0:
-            logger.info("[%2.0f%%] %3s/%s fragments fetched",
-                        fetched_fragment * 100.0 / self.total_fragments,
-                        fetched_fragment,
-                        self.total_fragments)
+            logger.info(
+                "[%2.0f%%] %3s/%s fragments fetched",
+                fetched_fragment * 100.0 / self.total_fragments,
+                fetched_fragment,
+                self.total_fragments,
+            )
 
-    def fragment_download_failed(self, e):    # pylint: disable=no-self-use
-        """apply_async error callback.
-
-        """
+    def fragment_download_failed(self, e):  # pylint: disable=no-self-use
+        """apply_async error callback."""
         try:
             raise e
-        except Exception:    # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # I don't have the url in the run time exception. hope requests
             # exception have it.
             logger.exception("fragment download failed")
 
     def download_fragments(self, fragment_urls):
-        """download fragments.
-
-        """
+        """download fragments."""
         pool = multiprocessing.Pool(self.poolsize)
         self.total_fragments = len(fragment_urls)
         logger.info("playlist has %s fragments", self.total_fragments)
@@ -389,9 +384,12 @@ class M3u8Downloader:
             if url in self.fragments:
                 logger.info("skip downloaded fragment: %s", url)
                 continue
-            pool.apply_async(self.download_fragment, (url,),
-                             callback=self.fragment_downloaded,
-                             error_callback=self.fragment_download_failed)
+            pool.apply_async(
+                self.download_fragment,
+                (url,),
+                callback=self.fragment_downloaded,
+                error_callback=self.fragment_download_failed,
+            )
         pool.close()
         pool.join()
 
@@ -411,11 +409,11 @@ class M3u8Downloader:
             content = get_url_content(url)
 
         fragment_urls = []
-        for line in content.decode("utf-8").split('\n'):
-            if line.startswith('#EXT-X-KEY'):
+        for line in content.decode("utf-8").split("\n"):
+            if line.startswith("#EXT-X-KEY"):
                 self.download_key(url, line)
                 continue
-            if line.startswith('#') or line.strip() == '':
+            if line.startswith("#") or line.strip() == "":
                 continue
             if line.endswith(".m3u8"):
                 raise RuntimeError("media playlist should not include .m3u8")
@@ -425,37 +423,34 @@ class M3u8Downloader:
         logger.info("media playlist all fragments downloaded")
 
     def process_master_playlist(self, url, content):
-        """choose the highest quality media playlist, and download it.
-
-        """
+        """choose the highest quality media playlist, and download it."""
         last_resolution = None
         target_media_playlist = None
         replace_on_next_line = False
-        pattern = re.compile(r'RESOLUTION=([0-9]+x[0-9]+)')
-        for line in content.decode("utf-8").split('\n'):
+        pattern = re.compile(r"RESOLUTION=([0-9]+x[0-9]+)")
+        for line in content.decode("utf-8").split("\n"):
             mo = pattern.search(line)
             if mo:
                 resolution = mo.group(1)
                 if is_higher_resolution(resolution, last_resolution):
                     last_resolution = resolution
                     replace_on_next_line = True
-            if line.startswith('#'):
+            if line.startswith("#"):
                 continue
             if replace_on_next_line:
                 target_media_playlist = line
                 replace_on_next_line = False
             if target_media_playlist is None:
                 target_media_playlist = line
-        logger.info("chose resolution=%s uri=%s",
-                    last_resolution, target_media_playlist)
+        logger.info(
+            "chose resolution=%s uri=%s", last_resolution, target_media_playlist
+        )
         self.process_media_playlist(urljoin(url, target_media_playlist))
 
     def download_m3u8_link(self, url):
-        """download video at m3u8 link.
-
-        """
+        """download video at m3u8 link."""
         content = get_url_content(url)
-        if "RESOLUTION" in content.decode('utf-8'):
+        if "RESOLUTION" in content.decode("utf-8"):
             self.process_master_playlist(url, content)
         else:
             self.process_media_playlist(url, content)
@@ -468,31 +463,54 @@ def signal_handler(sig, frame):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='m3u8downloader',
-                                     description="download video at m3u8 url")
-    parser.add_argument('--user-agent',
-                        default=CONF.getstr("user_agent"),
-                        help='specify User-Agent header for HTTP requests')
-    parser.add_argument('--origin',
-                        default=CONF.getstr("origin"),
-                        help='specify Origin header for HTTP requests')
-    parser.add_argument('--version', action='version',
-                        version='%(prog)s ' + m3u8downloader.__version__)
-    parser.add_argument('--debug', action='store_true',
-                        default=CONF.getbool("debug"),
-                        help='enable debug log')
-    parser.add_argument('--output', '-o', required=True,
-                        help='output video filename, e.g. ~/Downloads/foo.mp4')
+    parser = argparse.ArgumentParser(
+        prog="m3u8downloader", description="download video at m3u8 url"
+    )
     parser.add_argument(
-        '--tempdir', default=CONF.getstr("tempdir"),
-        help='temp dir, used to store .ts files before combing them into mp4')
+        "--user-agent",
+        default=CONF.getstr("user_agent"),
+        help="specify User-Agent header for HTTP requests",
+    )
     parser.add_argument(
-        '--keep', action='store_true', default=CONF.getbool("keep"),
-        help='keep files in tempdir after converting to mp4')
-    parser.add_argument('--concurrency', '-c', metavar='N', type=int,
-                        default=CONF.getint("concurrency"),
-                        help='number of fragments to download at a time')
-    parser.add_argument('url', metavar='URL', help='the m3u8 url')
+        "--origin",
+        default=CONF.getstr("origin"),
+        help="specify Origin header for HTTP requests",
+    )
+    parser.add_argument(
+        "--version", action="version", version="%(prog)s " + m3u8downloader.__version__
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=CONF.getbool("debug"),
+        help="enable debug log",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        required=True,
+        help="output video filename, e.g. ~/Downloads/foo.mp4",
+    )
+    parser.add_argument(
+        "--tempdir",
+        default=CONF.getstr("tempdir"),
+        help="temp dir, used to store .ts files before combing them into mp4",
+    )
+    parser.add_argument(
+        "--keep",
+        action="store_true",
+        default=CONF.getbool("keep"),
+        help="keep files in tempdir after converting to mp4",
+    )
+    parser.add_argument(
+        "--concurrency",
+        "-c",
+        metavar="N",
+        type=int,
+        default=CONF.getint("concurrency"),
+        help="number of fragments to download at a time",
+    )
+    parser.add_argument("url", metavar="URL", help="the m3u8 url")
     args = parser.parse_args()
 
     if args.debug:
@@ -503,17 +521,19 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    SESSION.headers.update({'User-Agent': args.user_agent})
+    SESSION.headers.update({"User-Agent": args.user_agent})
     if args.origin:
-        SESSION.headers.update({'Origin': args.origin})
-    tempdir = args.tempdir or os.path.join(get_default_cache_dir(),
-                                           'm3u8downloader')
-    downloader = M3u8Downloader(args.url, args.output,
-                                tempdir=tempdir,
-                                poolsize=args.concurrency,
-                                keep=args.keep)
+        SESSION.headers.update({"Origin": args.origin})
+    tempdir = args.tempdir or os.path.join(get_default_cache_dir(), "m3u8downloader")
+    downloader = M3u8Downloader(
+        args.url,
+        args.output,
+        tempdir=tempdir,
+        poolsize=args.concurrency,
+        keep=args.keep,
+    )
     downloader.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

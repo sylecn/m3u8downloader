@@ -10,3 +10,5 @@ pylint ~= 3.2.7; python_version >= '3.4'
 # some pkg latest version no longer support python 2 or python3.4
 more-itertools<6.0.0; python_version < '3.4'    # dependency for pytest
 astroid <2.0.0; python_version < '3.4'          # dependency for pylint
+
+ruff

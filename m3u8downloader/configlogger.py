@@ -5,8 +5,13 @@
 config logger
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import os.path
 import logging
@@ -29,11 +34,10 @@ def load_logger_config():
         return
 
     level = logging.INFO
-    logging.basicConfig(
-        format='%(asctime)s %(levelname)-8s %(message)s',
-        level=level)
-    logging.debug("log dir %s doesn't exist. Using basic config with level=%s",
-                  logdir, level)
+    logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s", level=level)
+    logging.debug(
+        "log dir %s doesn't exist. Using basic config with level=%s", logdir, level
+    )
 
 
 logging.captureWarnings(True)

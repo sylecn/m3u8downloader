@@ -21,3 +21,6 @@ TAGS
 Dockerfile
 .dockerignore
 tmp-*
+
+.idea/
+.ruff_cache/

@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-"""test signal handler and subprocess
-
-"""
+"""test signal handler and subprocess"""
 
 import logging
 import signal
@@ -23,8 +21,8 @@ def signal_handler(sig, frame):
 
 def main():
     logging.basicConfig(
-        format='%(asctime)s %(name)s %(levelname)-8s %(message)s',
-        level=logging.INFO)
+        format="%(asctime)s %(name)s %(levelname)-8s %(message)s", level=logging.INFO
+    )
     logger.debug("setup signal_handler for SIGINT")
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -32,5 +30,5 @@ def main():
     subprocess.call(["sleep", "60"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
