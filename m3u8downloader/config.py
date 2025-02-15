@@ -13,7 +13,6 @@ import os
 from wells.config import ConfigurationManger
 
 
-
 logger = logging.getLogger(__name__)
 
 

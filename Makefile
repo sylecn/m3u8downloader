@@ -3,6 +3,7 @@ PYTHONPATH := .
 VENV := .venv
 PYTEST := env PYTHONPATH=$(PYTHONPATH) PYTEST=1 $(VENV)/bin/py.test
 PYLINT := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/pylint --disable=I0011,line-too-long,invalid-name --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"
+RUFF := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/ruff
 PEP8 := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/pycodestyle --repeat --ignore=E202,E501,E402,W504
 PYTHON := env PYTHONPATH=$(PYTHONPATH) $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
@@ -80,6 +81,8 @@ sanity-check: bootstrap
 check-coding-style: bootstrap-dev
 	$(PEP8) $(PYTHON_MODULES)
 	$(PYLINT) -E $(PYTHON_MODULES)
+	$(RUFF) format --diff .
+	$(RUFF) check --diff .
 	$(PYTHON) m3u8downloader/config.py
 pylint-full: check-coding-style
 	$(PYLINT) $(PYTHON_MODULES)
