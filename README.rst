@@ -125,6 +125,10 @@ Bugs should be reported to `github issues`_.
 ChangeLog
 ---------
 
+* v0.11.2
+
+  - auto create target dir before running ffmpeg
+
 * v0.11.1
 
   - add --keep option to keep temp files after converting to mp4
