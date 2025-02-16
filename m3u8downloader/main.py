@@ -274,6 +274,12 @@ class M3u8Downloader:
         target_mp4 = self.output_filename
         if not target_mp4.endswith(".mp4"):
             target_mp4 += ".mp4"
+        target_dir = os.path.dirname(target_mp4)
+        try:
+            os.makedirs(target_dir, exist_ok=True)
+        except IOError:
+            logger.exception("failed to create target directory: %s", target_dir)
+            sys.exit(1)
         cmd = ["ffmpeg",
                "-loglevel", "warning",
                "-allowed_extensions", "ALL",
