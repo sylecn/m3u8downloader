@@ -1,6 +1,6 @@
 * COMMENT -*- mode: org -*-
 #+Date: 2019-03-02
-Time-stamp: <2025-02-16>
+Time-stamp: <2025-02-28>
 #+STARTUP: content
 * notes                                                               :entry:
 ** 2020-05-08 how to distribute pkg on pypi?				:doc:
@@ -54,6 +54,15 @@ to handle it on ryzen5.
 
 * current                                                             :entry:
 ** 
+** 2025-02-28 port this program to termux in android.
+OSError: [Errno 36] File name too long · Issue #3 · sylecn/m3u8downloader
+https://github.com/sylecn/m3u8downloader/issues/3
+
+Internal and external storage - Termux Wiki
+https://wiki.termux.com/wiki/Internal_and_external_storage
+
+- update default cache dir for termux.
+
 ** 2020-05-08 add travis CI for this project.
 - add travis CI to run unit tests on linux and windows.
 - add badge in README.rst
