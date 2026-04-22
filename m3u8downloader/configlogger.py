@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # coding=utf-8
 
 """
@@ -11,8 +10,8 @@ from __future__ import (absolute_import, division, print_function,
 import os.path
 import logging
 
+from importlib import resources
 from logging.config import fileConfig
-from pkg_resources import resource_filename
 
 
 def load_logger_config():
@@ -25,7 +24,9 @@ def load_logger_config():
     """
     logdir = "/var/log/m3u8downloader/"
     if os.path.exists(logdir):
-        fileConfig(resource_filename("m3u8downloader", "logger.conf"))
+        logger_conf = resources.files("m3u8downloader").joinpath("logger.conf")
+        with resources.as_file(logger_conf) as logger_conf_path:
+            fileConfig(str(logger_conf_path))
         return
 
     level = logging.INFO
